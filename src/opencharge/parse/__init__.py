@@ -24,6 +24,10 @@ class Parser(Protocol):
 
     def lines(self) -> Iterator[RawPriceLine | RejectedRow]: ...
 
+    def schema_columns(self) -> list[str] | None:
+        """Column names (CSV) or key paths (JSON) for drift detection; None if not yet known."""
+        ...
+
 
 def get_parser(name: str, path: Path, compression: Compression = Compression.NONE) -> Parser:
     if name == CsvTallParser.name:

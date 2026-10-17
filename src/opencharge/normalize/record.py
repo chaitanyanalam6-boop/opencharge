@@ -19,6 +19,7 @@ class NormalizedPriceLine:
     hospital_id: str
     code_type: CodeType | None
     code: str | None
+    code_issue: str | None  # a problem with the primary code itself, e.g. code_shape_mismatch
     other_codes: tuple[tuple[CodeType, str], ...]
     description_raw: str
     description_clean: str
@@ -48,8 +49,8 @@ def normalize_line(
 ) -> NormalizedPriceLine:
     issues: list[str] = []
 
-    primary, others, code_issues = primary_code(raw.codes)
-    issues.extend(code_issues)
+    codes = primary_code(raw.codes)
+    issues.extend(codes.issues)
 
     setting, setting_issue = normalize_setting(raw.setting, raw.source_locator)
     if setting_issue:
@@ -73,9 +74,10 @@ def normalize_line(
 
     return NormalizedPriceLine(
         hospital_id=hospital_id,
-        code_type=primary[0] if primary else None,
-        code=primary[1] if primary else None,
-        other_codes=others,
+        code_type=codes.primary[0] if codes.primary else None,
+        code=codes.primary[1] if codes.primary else None,
+        code_issue=codes.primary_issue,
+        other_codes=codes.others,
         description_raw=raw.description,
         description_clean=clean_description(raw.description),
         setting=setting,

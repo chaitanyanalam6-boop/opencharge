@@ -53,6 +53,14 @@ class JsonV3Parser:
         self.path = path
         self.compression = compression
         self.quirks: Counter[str] = Counter()
+        # Keys seen at each level ("item.description", "payer.standard_charge_dollar"),
+        # collected while streaming; JSON's equivalent of a CSV header, for drift detection.
+        self._key_paths: set[str] = set()
+        self._fully_read = False
+
+    def schema_columns(self) -> list[str] | None:
+        """Known only after lines() has been consumed: JSON has no header to read first."""
+        return sorted(self._key_paths) if self._fully_read else None
 
     def read_header(self) -> FileHeader:
         """Read top-level fields that appear before the item array.
@@ -77,6 +85,7 @@ class JsonV3Parser:
             items = ijson.items(stream, ITEMS_PREFIX, use_float=False)
             for item_number, item in enumerate(items, start=1):
                 yield from self._item_lines(item_number, item, first_seen)
+        self._fully_read = True
 
     def _item_lines(
         self, item_number: int, item: Any, first_seen: FirstSeen
@@ -88,6 +97,7 @@ class JsonV3Parser:
             )
             return
 
+        self._key_paths.update(f"item.{key}" for key in item)
         drug = item.get("drug_information") or {}
         codes = tuple(
             Code(text(c.get("code")) or "", text(c.get("type")) or "")
@@ -97,6 +107,7 @@ class JsonV3Parser:
 
         for charge_index, charge in enumerate(item["standard_charges"]):
             charge_path = f"{base}/standard_charges/{charge_index}"
+            self._key_paths.update(f"charge.{key}" for key in charge)
             common = dict(
                 description=text(item.get("description")) or "",
                 codes=codes,
@@ -125,6 +136,7 @@ class JsonV3Parser:
                     )
 
             for payer_index, payer in enumerate(charge.get("payers_information") or []):
+                self._key_paths.update(f"payer.{key}" for key in payer)
                 dollar = text(payer.get("standard_charge_dollar"))
                 percentage = text(payer.get("standard_charge_percentage"))
                 algorithm = text(payer.get("standard_charge_algorithm"))

@@ -8,7 +8,7 @@ machine-readable files hospitals must publish under federal price transparency r
 
 *Built from public CMS price transparency files; not medical or billing advice.*
 
-**Status:** Phase 2 — parsing and normalization of all three CMS file shapes.
+**Status:** Phase 3 — validation, quarantine, loading and schema drift detection.
 
 ## Run it locally
 
@@ -22,7 +22,7 @@ uv run black --check .  # formatting
 uv run mypy             # type check
 ```
 
-### Fetch hospital files
+### Ingest: fetch, parse, validate, load
 
 ```bash
 cp .env.example .env    # then set OPENCHARGE_CONTACT_EMAIL; it goes in our User-Agent
@@ -30,10 +30,18 @@ uv run --env-file .env python -m opencharge.ingest --all
 uv run --env-file .env python -m opencharge.ingest --hospital mercy-medical-center
 ```
 
-Files land in `data/raw/<hospital-id>/<sha256>.<ext>` and are recorded in a local DuckDB
-file, `data/opencharge.duckdb`. Running it again on unchanged files is a no-op.
+One run downloads each hospital's file to `data/raw/<hospital-id>/<sha256>.<ext>`, then
+parses, normalizes and validates every price. Valid prices load into `price_line`; anything
+that fails a named rule goes to `quarantined_row` with its raw payload. The database is a
+local DuckDB file, `data/opencharge.duckdb`, created and upgraded by Alembic migrations.
+Running it again on unchanged files is a no-op.
 
-### Parse and normalize
+```bash
+uv run python -m opencharge.load --all --reprocess        # reload after changing a rule
+uv run python -m opencharge.load --accept-drift <file_id> # accept reviewed column changes
+```
+
+### Inspect normalization without loading
 
 ```bash
 uv run python -m opencharge.normalize --all

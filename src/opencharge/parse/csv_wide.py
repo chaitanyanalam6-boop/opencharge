@@ -74,6 +74,9 @@ class CsvWideParser:
     def read_header(self) -> FileHeader:
         return self.template.read_header()
 
+    def schema_columns(self) -> list[str] | None:
+        return self.template.header_columns()
+
     def lines(self) -> Iterator[RawPriceLine | RejectedRow]:
         groups: list[PayerColumns] | None = None
         column_names: dict[int, str] = {}

@@ -13,6 +13,9 @@ dependencies = [
     "duckdb-engine>=0.13",
     "pytz>=2026.5",
     "ijson>=3.6.0",
+    "polars>=2.0.0",
+    "pyarrow>=26.0.0",
+    "alembic>=1.20.0",
 ]
 
 [dependency-groups]

@@ -138,6 +138,14 @@ class CsvTemplate:
             hospital_address=meta.get("hospital_address"),
         )
 
+    def header_columns(self) -> list[str]:
+        """The normalized column header (row 3), read without scanning the data."""
+        with open_binary(self.path, self.compression) as stream:
+            reader = csv.reader(decoded_lines(stream, Counter()))
+            next(reader, None)
+            next(reader, None)
+            return [normalize_column(c) for c in next(reader, [])]
+
     def rows(self) -> Iterator[Row]:
         """Yield each data row.
 

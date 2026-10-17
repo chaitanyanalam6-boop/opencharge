@@ -1,4 +1,8 @@
-"""python -m opencharge.ingest --all | --hospital ID [ID ...]"""
+"""python -m opencharge.ingest --all | --hospital ID [ID ...] [--fetch-only]
+
+Fetch each hospital's file, then parse, validate and load any that are new, all as one
+ingest_run.
+"""
 
 import argparse
 import logging
@@ -8,6 +12,9 @@ import sys
 from opencharge.db import make_engine
 from opencharge.ingest.fetch import RunSummary, run_fetch
 from opencharge.ingest.polite import DEFAULT_MIN_INTERVAL_SECONDS, PoliteClient, build_http_client
+from opencharge.load.pipeline import process_pending
+from opencharge.load.runs import finish_run, format_results
+from opencharge.models import RunStatus
 from opencharge.registry import load_registry
 
 
@@ -30,6 +37,9 @@ def main(argv: list[str] | None = None) -> int:
     which.add_argument("--all", action="store_true", help="fetch every registry hospital")
     which.add_argument("--hospital", nargs="+", metavar="ID", help="fetch only these ids")
     parser.add_argument(
+        "--fetch-only", action="store_true", help="download files but do not parse or load them"
+    )
+    parser.add_argument(
         "--min-interval",
         type=float,
         default=DEFAULT_MIN_INTERVAL_SECONDS,
@@ -47,15 +57,26 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
+    engine = make_engine()
+    hospital_ids = None if args.all else args.hospital
     with build_http_client(contact) as client:
         summary = run_fetch(
-            make_engine(),
+            engine,
             load_registry(),
             PoliteClient(client, min_interval=args.min_interval),
-            hospital_ids=None if args.all else args.hospital,
+            hospital_ids=hospital_ids,
         )
     print(format_summary(summary))
-    return 0 if summary.status.value == "success" else 1
+    if args.fetch_only:
+        return 0 if summary.status is RunStatus.SUCCESS else 1
+
+    # Same run: parse, validate and load whatever is new. Unchanged files are skipped.
+    results = process_pending(engine, summary.run_id, hospital_ids)
+    status = finish_run(engine, summary.run_id, results)
+    print()
+    print(format_results(results))
+    print(f"\nRun {summary.run_id}: {status.value.upper()}")
+    return 0 if status is RunStatus.SUCCESS else 1
 
 
 if __name__ == "__main__":

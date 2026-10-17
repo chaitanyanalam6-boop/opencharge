@@ -267,3 +267,39 @@ our User-Agent to get past a block (brief §7.6).
 - Payer text: underscores become spaces before matching.
 
 **Revisit when.** Users need APR-DRG search (then it gets its own code type, not a merge).
+
+---
+
+## 2026-10-16 — Phase 3: how validation, quarantine, loading and drift behave
+
+**Decision.**
+- **One transaction per file.** Parse → normalize → validate → insert/quarantine → supersede
+  the hospital's older file all commit together, or not at all.
+- **Quarantine records the first failed rule** in `failed_rule` and every failed rule in
+  `detail`, with the raw parsed line as `raw_payload`. Parser-rejected rows use
+  `row_misaligned` and keep their raw cells.
+- **The database enforces provenance itself** (brief §7.3): `source_file_id`,
+  `source_row_number` (> 0), `source_locator` (non-empty), `parser_name`, `schema_version` and
+  `ingested_at` are NOT NULL; `source_file_id` is a foreign key. CHECK constraints also forbid
+  negative money, unknown code/price types and settings, and a payer on a non-negotiated price.
+- **A newer file supersedes the older one**: the old file's `price_line` rows are deleted (its
+  `source_file` row and quarantine history stay). Search therefore only ever sees one file per
+  hospital.
+- **Schema drift** compares each file's columns (CSV header; JSON key paths) with the
+  hospital's previous file. Prices read from columns the previous file lacked are quarantined
+  as `schema_drift`; everything else loads; the file and run are marked `drift` and a
+  `schema_drift` row lists added/removed columns. `python -m opencharge.load --accept-drift
+  <file_id>` marks it reviewed and reloads. JSON drift is surfaced only: the JSON parser never
+  reads unknown keys, so no price can come from one.
+- **Bulk loading**: DuckDB gets batches of 50,000 via Arrow; other databases (Postgres in
+  deployment) use SQLAlchemy batched inserts. Postgres `COPY` is the upgrade path if needed.
+- **Alembic** baseline migration generated against SQLite (Alembic cannot introspect DuckDB);
+  `tests/test_migrations.py` fails if models.py and the migrations ever disagree.
+- **`payer_resolved_if_negotiated` quarantines** negotiated rates whose payer we cannot map
+  (brief rule). These are recoverable: add an alias, run `--reprocess`, and they load.
+
+**Why.** Every rule is named, every rejected value is kept, and the database itself refuses a
+price without provenance, so "zero bad rows in price_line" doesn't depend on Python being right.
+
+**Revisit when.** We want price history across file versions (then supersede by flag, not
+delete), or Postgres load time matters (then COPY).

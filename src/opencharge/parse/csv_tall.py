@@ -36,6 +36,9 @@ class CsvTallParser:
     def read_header(self) -> FileHeader:
         return self.template.read_header()
 
+    def schema_columns(self) -> list[str] | None:
+        return self.template.header_columns()
+
     def lines(self) -> Iterator[RawPriceLine | RejectedRow]:
         first_seen = FirstSeen(self.quirks)
 

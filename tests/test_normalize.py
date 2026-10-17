@@ -109,20 +109,22 @@ def test_classify(
 def test_primary_code_prefers_what_people_search_by() -> None:
     # MedStar rows carry CDM, RC and CPT; the CPT is what "knee MRI" resolves to.
     codes = (Code("32710154", "CDM"), Code("361", "RC"), Code("10030", "CPT"))
-    primary, others, issues = primary_code(codes)
-    assert primary == (CodeType.CPT, "10030")
-    assert others == ((CodeType.LOCAL, "32710154"), (CodeType.REV, "0361"))
-    assert issues == ()
+    choice = primary_code(codes)
+    assert choice.primary == (CodeType.CPT, "10030")
+    assert choice.others == ((CodeType.LOCAL, "32710154"), (CodeType.REV, "0361"))
+    assert choice.issues == ()
+    assert choice.primary_issue is None
 
 
 def test_placeholder_code_is_ignored_and_reported() -> None:
-    primary, _, issues = primary_code((Code("2500000001", "CDM"), Code("0", "RC")))
-    assert primary == (CodeType.LOCAL, "2500000001")
-    assert any(i.startswith("placeholder_code_ignored") for i in issues)
+    choice = primary_code((Code("2500000001", "CDM"), Code("0", "RC")))
+    assert choice.primary == (CodeType.LOCAL, "2500000001")
+    assert any(i.startswith("placeholder_code_ignored") for i in choice.issues)
 
 
 def test_no_codes_is_reported() -> None:
-    assert primary_code(()) == (None, (), ("no_code",))
+    choice = primary_code(())
+    assert (choice.primary, choice.issues) == (None, ("no_code",))
 
 
 # --- setting ----------------------------------------------------------------------------
@@ -315,9 +317,9 @@ def test_apr_drg_is_not_merged_with_ms_drg() -> None:
 @pytest.mark.parametrize("placeholder", ["N/A", "-", "XXXXX", "0", "000"])
 def test_placeholder_codes_are_never_searchable(placeholder: str) -> None:
     # GBMC writes CPT "N/A"; GWU writes HCPCS "-" and "XXXXX"; Mercy writes RC "0".
-    primary, _, issues = primary_code((Code(placeholder, "CPT"),))
-    assert primary is None
-    assert issues[0].startswith("placeholder_code_ignored")
+    choice = primary_code((Code(placeholder, "CPT"),))
+    assert choice.primary is None
+    assert choice.issues[0].startswith("placeholder_code_ignored")
 
 
 @pytest.mark.parametrize(
@@ -335,3 +337,13 @@ def test_payer_matching_new_hospitals(
     payers: PayerMatcher, payer: str, plan: str, expected: str | None
 ) -> None:
     assert payers.match(payer, plan) == expected
+
+
+def test_primary_issue_belongs_to_the_primary_code_only() -> None:
+    # A malformed NDC next to a valid CPT must not make the line's code invalid.
+    choice = primary_code((Code("73721", "CPT"), Code("121053005", "NDC")))
+    assert choice.primary == (CodeType.CPT, "73721")
+    assert choice.primary_issue is None
+    assert any(i.startswith("code_shape_mismatch") for i in choice.issues)
+    bad = primary_code((Code("ABCDE", "CPT"),))
+    assert bad.primary_issue == "code_shape_mismatch"

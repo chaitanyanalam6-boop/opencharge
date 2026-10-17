@@ -6,6 +6,7 @@ to shape alone (5-digit numeric -> CPT, letter + 4 digits -> HCPCS, 3 digits -> 
 """
 
 import re
+from dataclasses import dataclass
 from enum import StrEnum
 
 from opencharge.normalize.money import NULL_TOKENS
@@ -105,22 +106,30 @@ def is_placeholder_code(code: str) -> bool:
     return value in NULL_TOKENS or set(value) <= {"0"} or set(value) <= {"x"}
 
 
-def primary_code(
-    codes: tuple[Code, ...],
-) -> tuple[tuple[CodeType, str] | None, tuple[tuple[CodeType, str], ...], tuple[str, ...]]:
-    """Pick the code a person would search by; keep the rest. Returns (primary, others, issues)."""
-    classified = []
+@dataclass(frozen=True, slots=True)
+class CodeChoice:
+    primary: tuple[CodeType, str] | None
+    others: tuple[tuple[CodeType, str], ...]
+    # Problem with the primary code specifically (validation's code_format_valid reads this).
+    primary_issue: str | None
+    # Notes about every code on the item, primary or not, for the line's issues list.
+    issues: tuple[str, ...]
+
+
+def primary_code(codes: tuple[Code, ...]) -> CodeChoice:
+    """Pick the code a person would search by, and keep the rest."""
+    classified: list[tuple[CodeType, str, str | None]] = []
     issues = []
     for c in codes:
         if is_placeholder_code(c.code):
             issues.append(f"placeholder_code_ignored ({c.type or 'no type'} {c.code})")
             continue
         code_type, value, issue = classify(c.code, c.type)
-        classified.append((code_type, value))
+        classified.append((code_type, value, issue))
         if issue:
             issues.append(f"{issue} ({c.type or 'no type'} {c.code})")
     if not classified:
-        return None, (), (*issues, "no_code")
-    best = min(classified, key=lambda pair: PRIORITY.index(pair[0]))
-    others = tuple(pair for pair in classified if pair is not best)
-    return best, others, tuple(issues)
+        return CodeChoice(None, (), None, (*issues, "no_code"))
+    best = min(classified, key=lambda entry: PRIORITY.index(entry[0]))
+    others = tuple((entry[0], entry[1]) for entry in classified if entry is not best)
+    return CodeChoice((best[0], best[1]), others, best[2], tuple(issues))
