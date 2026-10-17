@@ -8,7 +8,7 @@ machine-readable files hospitals must publish under federal price transparency r
 
 *Built from public CMS price transparency files; not medical or billing advice.*
 
-**Status:** Phase 1 — source registry, discovery and fetch.
+**Status:** Phase 2 — parsing and normalization of all three CMS file shapes.
 
 ## Run it locally
 
@@ -32,6 +32,20 @@ uv run --env-file .env python -m opencharge.ingest --hospital mercy-medical-cent
 
 Files land in `data/raw/<hospital-id>/<sha256>.<ext>` and are recorded in a local DuckDB
 file, `data/opencharge.duckdb`. Running it again on unchanged files is a no-op.
+
+### Parse and normalize
+
+```bash
+uv run python -m opencharge.normalize --all
+```
+
+Reports, per hospital, price lines by type, NULL rates and why, the share of negotiated rates
+matched to a canonical payer, and every normalization issue. Unmatched payer names go to
+`data/review/unmatched_payers.csv`.
+
+```bash
+uv run pytest -m integration   # parse the real files in data/raw/ and trace prices to source
+```
 
 ### Add a hospital
 

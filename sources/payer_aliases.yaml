@@ -1,0 +1,115 @@
+# Canonical payers, and the raw names hospitals publish for them.
+#
+# How matching works (normalize/payers.py):
+#   1. Bracketed internal codes are removed ("CAREFIRST [201]" -> "carefirst"), text lowercased.
+#   2. Patterns are tried against the payer name alone, then against "payer name + plan name"
+#      (JHHC publishes payer "Bcbs" with plan "Carefirst Medicare Managed Care Plan").
+#   3. The first payer whose pattern matches wins, so specific insurers come before the
+#      government programs ("Aetna Medicare" is Aetna, not Medicare).
+#   4. No match -> no payer_id, and the raw name is written to data/review/unmatched_payers.csv.
+#      We never guess. Ambiguous names (a bare "Bcbs", "AmeriHealth") are left unmatched on purpose.
+#
+# Patterns are Python regular expressions, case-insensitive.
+
+payers:
+  - id: aetna
+    name: Aetna
+    patterns: ['\baetna\b']
+
+  - id: carefirst
+    name: CareFirst BlueCross BlueShield
+    # CFCHP = CareFirst Community Health Plan Maryland (Medicaid).
+    patterns: ['carefirst', '\bcfchp\b']
+
+  - id: cigna
+    name: Cigna
+    patterns: ['\bcigna\b']
+
+  - id: unitedhealthcare
+    name: UnitedHealthcare
+    # MAMSI (Mid Atlantic Medical Services) and United Behavioral Health are UnitedHealth
+    # Group subsidiaries that hospitals still list by their own names.
+    patterns: ['united ?health ?care', '\buhc\b', '^mamsi\b', 'united behavioral health']
+
+  - id: kaiser-permanente
+    name: Kaiser Permanente
+    patterns: ['\bkaiser\b']
+
+  - id: humana
+    name: Humana
+    patterns: ['\bhumana\b']
+
+  - id: tricare
+    name: TRICARE
+    patterns: ['\btricare\b']
+
+  - id: wellpoint
+    name: Wellpoint (formerly Amerigroup)
+    # Amerigroup's Maryland Medicaid plan was renamed Wellpoint.
+    patterns: ['\bwellpoint\b', '\bamerigroup\b']
+
+  - id: amerihealth-caritas
+    name: AmeriHealth Caritas
+    patterns: ['amerihealth caritas']
+
+  - id: medstar-family-choice
+    name: MedStar Family Choice
+    patterns: ['medstar family choice']
+
+  - id: priority-partners
+    name: Priority Partners
+    patterns: ['priority partners']
+
+  - id: johns-hopkins-health-plans
+    name: Johns Hopkins Health Plans
+    # EHP = Johns Hopkins Employer Health Programs; USFHP = Johns Hopkins US Family Health Plan.
+    patterns: ['johns hopkins', '^ehp$', '^usfhp$']
+
+  - id: maryland-physicians-care
+    name: Maryland Physicians Care
+    patterns: ['maryland physicians? care', '^md physicians? care\b']
+
+  - id: jai-medical-systems
+    name: Jai Medical Systems
+    patterns: ['\bjai medical\b']
+
+  - id: magellan
+    name: Magellan Health
+    patterns: ['\bmagellan\b']
+
+  - id: multiplan
+    name: MultiPlan (incl. PHCS network)
+    patterns: ['\bmultiplan\b', '\bphcs\b', 'private healthcare systems']
+
+  - id: first-health
+    name: First Health Network
+    patterns: ['^first health\b']
+
+  - id: hscsn
+    name: Health Services for Children with Special Needs
+    patterns: ['^hscsn$']
+
+  - id: health-net
+    name: Health Net
+    patterns: ['^health ?net\b']
+
+  - id: wellcare
+    name: WellCare
+    patterns: ['\bwellcare\b']
+
+  - id: bcbs-north-carolina
+    name: Blue Cross NC
+    patterns: ['^blue cross nc\b']
+
+  - id: bcbs-florida
+    name: Florida Blue
+    patterns: ['^bcbsfl\b']
+
+  # Government programs last, so an insurer's Medicare Advantage plan matches the insurer.
+  - id: medicare
+    name: Medicare (traditional)
+    patterns: ['^medicare\b']
+
+  - id: medicaid
+    name: Medicaid (fee-for-service)
+    patterns: ['^medicaid\b']

@@ -173,3 +173,55 @@ every value. Every judgement call happens later, where it is named and tested.
 **Revisit when.** We add a price search that needs modifier adjustments (e.g. bilateral
 procedures), or when a hospital's file shows a repeated price that differs only in a field
 we don't key on.
+
+---
+
+## 2026-10-16 — Normalization rules (codes, money, payers)
+
+**What we found.**
+- Novant's CPT codes lost their leading zeros in a spreadsheet: `123U` for `0123U`,
+  `100` for anesthesia code `00100` (82,209 codes).
+- Mercy writes revenue code `0` on 731 pharmacy rows to mean "none", and reuses one CDM code
+  for hundreds of different drugs. Some of its NDCs are 9–10 digits with zeros lost.
+- MedStar cash prices carry four decimals (`3793.7662`).
+- Payer names vary by hospital: `AETNA [204]`, `Aetna US HealthCare Inc`, `Bcbs` with plan
+  `Carefirst Medicare Managed Care Plan`.
+
+**Decision.**
+- CPT codes shorter than 5 characters are zero-padded and flagged `leading_zeros_restored`:
+  CPT is always exactly 5 characters, so the restoration is deterministic. NDCs are *not*
+  padded: a 10-digit NDC has three possible 11-digit forms, so padding could pick the wrong drug.
+- All-zero codes are ignored and flagged, so a placeholder never becomes searchable.
+- Money: Decimal → integer cents, rounded once, half-up, flagged `sub_cent_rounded`; the raw
+  string is kept on every line. "N/A"-style values are NULL, never 0.
+- Payers: regex aliases in `sources/payer_aliases.yaml`, tried on the payer name and then on
+  payer + plan; insurers before government programs. Ambiguous names (a bare `Bcbs`,
+  `AmeriHealth`) are deliberately left unmatched and written to
+  `data/review/unmatched_payers.csv`.
+- Normalization never drops a line; every oddity is a named issue for Phase 3 validation.
+
+**Revisit when.** The review file shows a payer that recurs across many hospitals, or we
+need NDC search (then NDCs need an authoritative lookup, not padding).
+
+---
+
+## 2026-10-16 — Finding: Maryland hospital prices are set by the state, not negotiated
+
+**What we found.** Maryland's HSCRC sets hospital rates for all payers (the all-payer model,
+in place since 1977). The real files match this exactly:
+- MedStar Union Memorial publishes a "negotiated" dollar for 33 payer/plan blocks; every one
+  equals the gross charge.
+- MedStar's cash price is exactly 98% of gross: HSCRC's 2% prompt-pay discount.
+- Johns Hopkins Howard County publishes insurer rates as 92.3% or 100% of charges: 92.3% is
+  100% minus HSCRC's 7.7% public-payer differential (5.7% + 2.0%).
+- Mercy publishes no payer-specific rates at all.
+
+**What this means for the product.** In Maryland, the useful comparison is *between
+hospitals*, not between insurers at one hospital. Our numbers are still correct: every price
+is what the hospital published. But the UI's "insurer comparison" framing needs to explain
+this rather than imply negotiation, and professional fees (GBMC's "PB" plans) are where
+insurer-specific dollar differences actually appear. DC and Northern Virginia hospitals are
+not rate-regulated, so their files should show real negotiated spreads.
+
+**Revisit when.** Designing the results and provenance screens (Phase 6), and when choosing
+the next hospitals to add.

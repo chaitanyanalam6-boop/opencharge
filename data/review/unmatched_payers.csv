@@ -1,0 +1,18 @@
+hospital_id,payer_name,plan_name,price_lines
+medstar-union-memorial,PFC,PFC,69334
+medstar-union-memorial,NCPPO Healthlink PPO,NCPPO,69334
+novant-charlotte-orthopedic,Medcost,MBS,21113
+novant-charlotte-orthopedic,AMPS,All Plans,21099
+novant-charlotte-orthopedic,AmeriHealth,Medicaid,21099
+novant-charlotte-orthopedic,Atlantic Corporation DBA Atlantic Packaging,All Plans,21099
+novant-charlotte-orthopedic,Carolina Complete,Medicaid,21099
+novant-charlotte-orthopedic,Employers Choice Network,All Plans,21099
+novant-charlotte-orthopedic,Medcost,non-MBS,21099
+novant-charlotte-orthopedic,NC Department of Public Safety,Medicaid eligible Offenders,21099
+novant-charlotte-orthopedic,Plotkin Health,All Plans,21099
+novant-charlotte-orthopedic,Primary Physician Care,All Plans,21099
+novant-charlotte-orthopedic,Three Rivers Provider Network,All Plans,21099
+novant-charlotte-orthopedic,Caresource North Carolina,Qualified Health Plan,21097
+novant-charlotte-orthopedic,Liberty Health,Medicare HMO,12808
+novant-charlotte-orthopedic,NC Department of Public Safety,Offenders Not Medicaid eligible,12808
+novant-charlotte-orthopedic,Pace of the Southern Piedmont,All Plans,12808
