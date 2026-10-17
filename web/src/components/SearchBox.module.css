@@ -1,0 +1,64 @@
+.form {
+  width: 100%;
+}
+
+.heroLabel {
+  display: block;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.inputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--white);
+  color: var(--faint);
+  min-height: var(--touch);
+}
+
+.inputWrap:focus-within {
+  border-color: var(--teal);
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  min-height: 42px;
+  min-width: 0;
+}
+
+.input::placeholder {
+  color: var(--faint);
+}
+
+.large .inputWrap {
+  min-height: 56px;
+  font-size: 17px;
+}
+
+.large .row button {
+  min-height: 56px;
+  padding: 0 22px;
+}
+
+@media (max-width: 560px) {
+  .row {
+    flex-direction: column;
+  }
+}

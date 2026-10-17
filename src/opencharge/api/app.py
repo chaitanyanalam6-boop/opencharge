@@ -28,6 +28,7 @@ from opencharge.api.schemas import (
     NOTICE,
     ErrorOut,
     HospitalPriceDetail,
+    PayerOut,
     ProcedureResponse,
     SearchResponse,
     SourceFileOut,
@@ -280,6 +281,17 @@ def create_app(
         if row is None:
             raise HTTPException(404, "No such source file.")
         return views.source_file_out(row)
+
+    @app.get(
+        "/api/payers",
+        response_model=list[PayerOut],
+        dependencies=[Depends(limited("read"))],
+        summary="Canonical payers, for filters",
+    )
+    def payers(s: StateDep) -> list[PayerOut]:
+        return [
+            PayerOut(id=k, name=v) for k, v in sorted(s.payer_names.items(), key=lambda kv: kv[1])
+        ]
 
     # --- status -------------------------------------------------------------------------
 

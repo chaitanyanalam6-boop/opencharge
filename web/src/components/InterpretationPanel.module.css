@@ -1,0 +1,144 @@
+.panel {
+  background: var(--teal-tint);
+  border: 1px solid #cfe1dc;
+  border-radius: var(--radius-panel);
+  padding: 20px 22px;
+}
+
+.confirm {
+  border-color: var(--teal);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.question {
+  margin-top: 4px;
+  color: var(--body);
+  font-size: 15px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.chips {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  background: var(--white);
+  border: 1px solid #cfe1dc;
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.key {
+  color: var(--teal);
+}
+
+.unresolved {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--amber);
+  font-size: 14px;
+}
+
+.footnote {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.form {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #cfe1dc;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.types {
+  grid-column: span 2;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: center;
+}
+
+.types legend {
+  width: 100%;
+  float: left;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch);
+  font-size: 15px;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--teal);
+}
+
+.formActions {
+  grid-column: span 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .top {
+    flex-direction: column;
+  }
+  .actions {
+    justify-content: flex-start;
+  }
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+  .types,
+  .formActions {
+    grid-column: span 1;
+  }
+}

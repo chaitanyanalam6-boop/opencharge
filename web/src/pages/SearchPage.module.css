@@ -1,0 +1,199 @@
+.hero {
+  padding: 64px 0 40px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: clamp(30px, 5vw, 46px);
+  max-width: 18ch;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: 16px;
+  max-width: 58ch;
+  font-size: 18px;
+}
+
+.search {
+  margin-top: 32px;
+  max-width: 760px;
+}
+
+.examples {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  color: var(--body);
+  text-decoration: none;
+}
+
+.chip:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  margin: 8px 0 56px;
+}
+
+.stat {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid var(--line);
+}
+
+.stat:last-child {
+  border-right: 0;
+}
+
+.stat dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stat dd {
+  margin: 0;
+  font-size: 24px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.statsError {
+  padding: 18px 20px;
+  color: var(--muted);
+}
+
+.band {
+  background: var(--sunk);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 48px 0;
+}
+
+.bandTitle {
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.step {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 20px;
+}
+
+.step h3 {
+  font-size: 17px;
+  margin: 10px 0 6px;
+}
+
+.step p {
+  font-size: 15px;
+}
+
+.stepNumber {
+  font-size: 13px;
+  color: var(--teal);
+}
+
+.honesty {
+  margin: 56px 0 64px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal);
+  border-radius: var(--radius-panel);
+  padding: 28px;
+}
+
+.honesty h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.honesty p {
+  max-width: 64ch;
+}
+
+.honestyLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  white-space: nowrap;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.honestyLink:hover {
+  background: var(--sunk);
+}
+
+@media (max-width: 860px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat:nth-child(2) {
+    border-right: 0;
+  }
+  .stat:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .honesty {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero {
+    padding-top: 40px;
+  }
+  .stat dd {
+    font-size: 20px;
+  }
+}

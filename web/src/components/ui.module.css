@@ -1,0 +1,141 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch);
+  padding: 0 18px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--teal);
+  background: var(--teal);
+  color: var(--white);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: #095858;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.secondary {
+  background: var(--white);
+  color: var(--teal);
+  border-color: var(--line);
+}
+
+.secondary:hover {
+  background: var(--sunk);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Status pills: each differs in lightness and carries its own text label. */
+.pillTeal {
+  background: var(--teal-tint);
+  color: var(--teal-deep);
+  border-color: #cfe1dc;
+}
+
+.pillAmber {
+  background: var(--amber-tint);
+  color: var(--amber);
+  border-color: #efdcbc;
+}
+
+.pillDanger {
+  background: #fbefef;
+  color: var(--danger);
+  border-color: #efcfcf;
+}
+
+.pillGrey {
+  background: var(--sunk);
+  color: var(--muted);
+  border-color: var(--line);
+}
+
+.pillSolid {
+  background: var(--teal-deep);
+  color: var(--white);
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--white);
+  padding: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+.noticeAmber {
+  background: var(--amber-tint);
+  color: var(--amber);
+  border: 1px solid #efdcbc;
+}
+
+.noticeDanger {
+  background: #fbefef;
+  color: var(--danger);
+  border: 1px solid #efcfcf;
+}
+
+.noticeTeal {
+  background: var(--teal-tint);
+  color: var(--teal-deep);
+  border: 1px solid #cfe1dc;
+}
+
+.skeleton {
+  background: var(--sunk);
+  border-radius: var(--radius-control);
+  min-height: 18px;
+}
+
+.field {
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--white);
+}
+
+.field:focus {
+  border-color: var(--teal);
+}

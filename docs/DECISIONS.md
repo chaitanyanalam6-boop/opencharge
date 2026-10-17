@@ -393,3 +393,28 @@ options then are more abbreviations, or embedding search over descriptions.
 
 **Revisit when.** More than one API instance runs (cache and limiter move to Redis), or the
 detail page needs every source row (then store raw rows at load time instead of re-reading).
+
+---
+
+## 2026-10-17 — Phase 6: the web interface
+
+**Decision.**
+- **React + TypeScript + Vite, plain CSS Modules.** The brief's design tokens are CSS custom
+  properties in one file; every color in the app comes from them. No CSS framework: the design
+  is hairlines, spacing and tables, and hand-written CSS is easier to explain.
+- **Search state lives in the URL.** A plain question goes through the LLM once; every change
+  after that (filters, "Correct this") is a structured search in the URL, run without the LLM.
+  Results are shareable and the back button works.
+- **Billing codes bypass the LLM.** Typing `73721` searches that code directly, so the site
+  stays useful when no LLM is configured (the 503 page says so and suggests codes).
+- **Each result row shows the hospital's own description** of its typical line ("BC-MRI LREX
+  JT WO C LTD HIP RT"), so a limited study is visible as one; the variants list expands to
+  lowest / typical / highest with source rows.
+- **Lowest and highest differ in lightness and carry text pills**: lowest is a solid dark bar
+  with a "Lowest" pill; highest is a pale outlined bar with a "Highest" pill.
+- **390px verified by measurement**, not just screenshots: a same-origin harness loaded each
+  screen in a 390px iframe and checked that nothing is wider than the viewport. It caught a
+  price-page overflow (grid columns that couldn't shrink below a code block), now fixed.
+
+**Revisit when.** The API's types change often enough that hand-written TypeScript types drift;
+then generate them from /openapi.json.

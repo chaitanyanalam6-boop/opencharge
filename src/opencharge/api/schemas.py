@@ -228,5 +228,10 @@ class StatusResponse(BaseModel):
     notice: str = NOTICE
 
 
+class PayerOut(BaseModel):
+    id: str
+    name: str
+
+
 class ErrorOut(BaseModel):
     error: str

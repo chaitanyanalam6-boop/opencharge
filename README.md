@@ -8,7 +8,7 @@ machine-readable files hospitals must publish under federal price transparency r
 
 *Built from public CMS price transparency files; not medical or billing advice.*
 
-**Status:** Phase 5 — HTTP API over the natural-language query layer.
+**Status:** Phase 6 — web interface (search, results, price provenance, data status).
 
 ## Run it locally
 
@@ -66,6 +66,23 @@ open http://localhost:8000/docs
 
 Every price in every response carries `provenance`: source file URL, published date, fetch
 time, row number, column or JSON pointer, parser, and sha256.
+
+### Run the web interface
+
+```bash
+# terminal 1: the API
+uv run --env-file .env uvicorn opencharge.api.app:app --reload
+# terminal 2: the web app (proxies /api to the API)
+cd web && npm install && npm run dev
+open http://localhost:5173
+```
+
+Without a `GROQ_API_KEY`, plain-language search is off, but typing a billing code (`73721`,
+`70450`, `470`) still works: codes are searched directly, with no language model involved.
+
+```bash
+cd web && npm test && npm run typecheck   # frontend tests and type check
+```
 
 ### Inspect normalization without loading
 

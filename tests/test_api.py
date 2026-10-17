@@ -389,3 +389,9 @@ def test_typical_price_is_a_real_published_line_never_an_average(engine: Engine)
 def test_gap_names_the_insurer(client: TestClient) -> None:
     body = client.get("/api/search", params={"q": "knee MRI with Aetna"}).json()
     assert body["gaps"][0]["detail"] == "The file lists this code, but no Aetna rate."
+
+
+def test_payers_lists_canonical_payers(client: TestClient) -> None:
+    payers = client.get("/api/payers").json()
+    assert {"id": "aetna", "name": "Aetna"} in payers
+    assert [p["name"] for p in payers] == sorted(p["name"] for p in payers)
