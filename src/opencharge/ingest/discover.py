@@ -13,7 +13,7 @@ import httpx
 import yaml
 
 from opencharge.ingest.hpt import candidate_registry_entry, fetch_cms_hpt, index_url_for
-from opencharge.ingest.polite import build_http_client
+from opencharge.ingest.polite import PoliteClient, build_http_client
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,8 +30,13 @@ def main(argv: list[str] | None = None) -> int:
 
     exit_code = 0
     with build_http_client(contact) as client:
+        polite = PoliteClient(client)
         for domain in args.domains:
             index_url = index_url_for(domain)
+            if not polite.allowed(index_url):
+                print(f"# {index_url}: disallowed by robots.txt; skipped", file=sys.stderr)
+                exit_code = 1
+                continue
             try:
                 entries = fetch_cms_hpt(client, domain)
             except httpx.HTTPError as error:

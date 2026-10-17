@@ -8,7 +8,7 @@ machine-readable files hospitals must publish under federal price transparency r
 
 *Built from public CMS price transparency files; not medical or billing advice.*
 
-**Status:** Phase 1 in progress — repository skeleton and source registry.
+**Status:** Phase 1 — source registry, discovery and fetch.
 
 ## Run it locally
 
@@ -21,6 +21,27 @@ uv run ruff check .     # lint
 uv run black --check .  # formatting
 uv run mypy             # type check
 ```
+
+### Fetch hospital files
+
+```bash
+cp .env.example .env    # then set OPENCHARGE_CONTACT_EMAIL; it goes in our User-Agent
+uv run --env-file .env python -m opencharge.ingest --all
+uv run --env-file .env python -m opencharge.ingest --hospital mercy-medical-center
+```
+
+Files land in `data/raw/<hospital-id>/<sha256>.<ext>` and are recorded in a local DuckDB
+file, `data/opencharge.duckdb`. Running it again on unchanged files is a no-op.
+
+### Add a hospital
+
+```bash
+uv run --env-file .env python -m opencharge.ingest.discover umms.org
+```
+
+Prints a draft `hospitals.yaml` entry for each facility in the system's `cms-hpt.txt`. Fill in
+the fields it leaves empty (CCN, address, coordinates, CSV shape, parser) from primary sources;
+the registry refuses to load until you do.
 
 ## Layout
 
