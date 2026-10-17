@@ -119,8 +119,8 @@ taken directly from the reader. Polars comes in where it is genuinely strong: bu
 normalization, validation and loading of already-parsed records.
 
 **Why.** Provenance has to be correct by construction, not by careful arithmetic. Flat memory
-use for any file size. The cost is speed: a 113 MB wide CSV takes on the order of a minute,
-which is fine for a weekly batch job.
+use for any file size. The expected cost was speed; measured, it is small: MedStar's 113 MB
+wide CSV parses in 8.5 s and Novant's 284 MB JSON in 4.7 s (ijson's C backend).
 
 **Revisit when.** Parse time dominates the weekly run (e.g. 50+ hospitals or multi-GB files
 like Holy Cross's 3.7 GB CSV), at which point a Polars CSV path with a row-number test
@@ -137,3 +137,39 @@ committed is secret: `.env` and `data/` are gitignored, and every hospital file 
 
 **Revisit when.** Never for code. Any credential that lands in history must be rotated, not
 just deleted.
+
+---
+
+## 2026-10-16 — Parser rules: what counts as a published price
+
+**What we found.** Profiling the three real files and CMS's samples:
+- Blank cells and "N/A"-style cells mean different things. Blank = the hospital wrote
+  nothing; "N/A" = the hospital wrote that there is no value.
+- Every CMS shape can repeat an item-level price (tall files copy gross/cash onto every
+  payer row; CMS's own wide and JSON samples list an item once per payer-rate variant).
+- Rows like "Bilateral procedure, modifier 50: 150%" are payment-adjustment rules, not
+  prices. JSON keeps them in a separate `modifier_information` section; CSV mixes them in.
+- A CSV row whose cell count differs from the header has its values in unknown columns.
+- JSON has no rows. CMS's own tall sample contradicts itself once (two different `min`
+  values for "Basic metabolic panel").
+
+**Decision.**
+- Blank cells produce no record. Anything written, including "N/A", produces a record so
+  normalize can store it as "published but empty" (NULL rate, never 0).
+- A repeated (item, price type, value) is emitted once, credited to the first row it
+  appears on, so provenance always points at a real cell.
+- Modifier-only rows are skipped in every format and counted as a quirk.
+- Misaligned CSV rows become `RejectedRow` (bound for quarantine in Phase 3); no price is
+  ever read from them.
+- JSON provenance: `source_row_number` is the 1-based item index, plus an RFC 6901 pointer
+  (`source_locator`) to the exact value. CSV provenance adds the column name as the locator.
+  `source_locator` is an addition to the brief's §4 schema.
+- Contradictions (like CMS's min=150 vs 125) are passed through faithfully; flagging them is
+  validation's job, not the parser's.
+
+**Why.** The parser's only job is to report what the file says, with an exact address for
+every value. Every judgement call happens later, where it is named and tested.
+
+**Revisit when.** We add a price search that needs modifier adjustments (e.g. bilateral
+procedures), or when a hospital's file shows a repeated price that differs only in a field
+we don't key on.

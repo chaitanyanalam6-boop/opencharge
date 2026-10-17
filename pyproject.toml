@@ -12,6 +12,7 @@ dependencies = [
     "duckdb>=1.1",
     "duckdb-engine>=0.13",
     "pytz>=2026.5",
+    "ijson>=3.6.0",
 ]
 
 [dependency-groups]
