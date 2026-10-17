@@ -1,6 +1,7 @@
 """Build a small, real database for tests: hospitals with CSV files, run through the actual
 fetch -> parse -> normalize -> validate -> load pipeline (over a fake HTTP transport)."""
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -84,3 +85,15 @@ def build_database(tmp_path: Path, hospitals: list[HospitalSpec]) -> Engine:
     )
     finish_run(engine, summary.run_id, process_pending(engine, summary.run_id))
     return engine
+
+
+class FakeLLM:
+    """Returns scripted replies in order and records every prompt it was sent."""
+
+    def __init__(self, *replies: object) -> None:
+        self.replies = [r if isinstance(r, str) else json.dumps(r) for r in replies]
+        self.calls: list[tuple[str, str]] = []
+
+    def complete_json(self, system: str, user: str) -> str:
+        self.calls.append((system, user))
+        return self.replies.pop(0)

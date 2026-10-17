@@ -1,0 +1,91 @@
+# The 70 CMS-specified shoppable services (45 CFR 180.60; Table 3 of the Hospital Price
+# Transparency final rule, 84 FR 65524).
+#
+# Transcribed from CMS, "10 Steps to Making Public Standard Charges for Shoppable Services",
+# https://www.cms.gov/files/document/steps-making-public-standard-charges-shoppable-services.pdf
+# (section "Final list of 70 CMS-specified shoppable services", 2020 primary codes).
+#
+# `codes` lists every code CMS accepts as the primary code for the service ("81000 or 81001",
+# "84153-84154"). A hospital covers a service if it publishes a dollar rate for any of them.
+# Used for the status page's coverage KPI.
+
+source: https://www.cms.gov/files/document/steps-making-public-standard-charges-shoppable-services.pdf
+
+services:
+  # Evaluation & Management Services
+  - {category: evaluation_management, name: "Psychotherapy, 30 min", code_type: CPT, codes: ["90832"]}
+  - {category: evaluation_management, name: "Psychotherapy, 45 min", code_type: CPT, codes: ["90834"]}
+  - {category: evaluation_management, name: "Psychotherapy, 60 min", code_type: CPT, codes: ["90837"]}
+  - {category: evaluation_management, name: "Family psychotherapy, not including patient, 50 min", code_type: CPT, codes: ["90846"]}
+  - {category: evaluation_management, name: "Family psychotherapy, including patient, 50 min", code_type: CPT, codes: ["90847"]}
+  - {category: evaluation_management, name: "Group psychotherapy", code_type: CPT, codes: ["90853"]}
+  - {category: evaluation_management, name: "New patient office or other outpatient visit, typically 30 min", code_type: CPT, codes: ["99203"]}
+  - {category: evaluation_management, name: "New patient office or other outpatient visit, typically 45 min", code_type: CPT, codes: ["99204"]}
+  - {category: evaluation_management, name: "New patient office or other outpatient visit, typically 60 min", code_type: CPT, codes: ["99205"]}
+  - {category: evaluation_management, name: "Patient office consultation, typically 40 min", code_type: CPT, codes: ["99243"]}
+  - {category: evaluation_management, name: "Patient office consultation, typically 60 min", code_type: CPT, codes: ["99244"]}
+  - {category: evaluation_management, name: "Initial new patient preventive medicine evaluation (18-39 years)", code_type: CPT, codes: ["99385"]}
+  - {category: evaluation_management, name: "Initial new patient preventive medicine evaluation (40-64 years)", code_type: CPT, codes: ["99386"]}
+
+  # Laboratory & Pathology Services
+  - {category: laboratory_pathology, name: "Basic metabolic panel", code_type: CPT, codes: ["80048"]}
+  - {category: laboratory_pathology, name: "Blood test, comprehensive group of blood chemicals", code_type: CPT, codes: ["80053"]}
+  - {category: laboratory_pathology, name: "Obstetric blood test panel", code_type: CPT, codes: ["80055"]}
+  - {category: laboratory_pathology, name: "Blood test, lipids (cholesterol and triglycerides)", code_type: CPT, codes: ["80061"]}
+  - {category: laboratory_pathology, name: "Kidney function panel test", code_type: CPT, codes: ["80069"]}
+  - {category: laboratory_pathology, name: "Liver function blood test panel", code_type: CPT, codes: ["80076"]}
+  - {category: laboratory_pathology, name: "Manual urinalysis test with examination using microscope", code_type: CPT, codes: ["81000", "81001"]}
+  - {category: laboratory_pathology, name: "Automated urinalysis test", code_type: CPT, codes: ["81002", "81003"]}
+  - {category: laboratory_pathology, name: "PSA (prostate specific antigen)", code_type: CPT, codes: ["84153", "84154"]}
+  - {category: laboratory_pathology, name: "Blood test, thyroid stimulating hormone (TSH)", code_type: CPT, codes: ["84443"]}
+  - {category: laboratory_pathology, name: "Complete blood cell count, with differential white blood cells, automated", code_type: CPT, codes: ["85025"]}
+  - {category: laboratory_pathology, name: "Complete blood count, automated", code_type: CPT, codes: ["85027"]}
+  - {category: laboratory_pathology, name: "Blood test, clotting time", code_type: CPT, codes: ["85610"]}
+  - {category: laboratory_pathology, name: "Coagulation assessment blood test", code_type: CPT, codes: ["85730"]}
+
+  # Radiology Services
+  - {category: radiology, name: "CT scan, head or brain, without contrast", code_type: CPT, codes: ["70450"]}
+  - {category: radiology, name: "MRI scan of brain before and after contrast", code_type: CPT, codes: ["70553"]}
+  - {category: radiology, name: "X-Ray, lower back, minimum four views", code_type: CPT, codes: ["72110"]}
+  - {category: radiology, name: "MRI scan of lower spinal canal", code_type: CPT, codes: ["72148"]}
+  - {category: radiology, name: "CT scan, pelvis, with contrast", code_type: CPT, codes: ["72193"]}
+  - {category: radiology, name: "MRI scan of leg joint", code_type: CPT, codes: ["73721"]}
+  - {category: radiology, name: "CT scan of abdomen and pelvis with contrast", code_type: CPT, codes: ["74177"]}
+  - {category: radiology, name: "Ultrasound of abdomen", code_type: CPT, codes: ["76700"]}
+  - {category: radiology, name: "Abdominal ultrasound of pregnant uterus (>= 14 weeks 0 days) single or first fetus", code_type: CPT, codes: ["76805"]}
+  - {category: radiology, name: "Ultrasound pelvis through vagina", code_type: CPT, codes: ["76830"]}
+  - {category: radiology, name: "Mammography of one breast", code_type: CPT, codes: ["77065"]}
+  - {category: radiology, name: "Mammography of both breasts", code_type: CPT, codes: ["77066"]}
+  - {category: radiology, name: "Mammography, screening, bilateral", code_type: CPT, codes: ["77067"]}
+
+  # Medicine and Surgery Services
+  - {category: medicine_surgery, name: "Cardiac valve and other major cardiothoracic procedures with cardiac catheterization with major complications or comorbidities", code_type: DRG, codes: ["216"]}
+  - {category: medicine_surgery, name: "Spinal fusion except cervical without MCC", code_type: DRG, codes: ["460"]}
+  - {category: medicine_surgery, name: "Major joint replacement or reattachment of lower extremity without MCC", code_type: DRG, codes: ["470"]}
+  - {category: medicine_surgery, name: "Cervical spinal fusion without CC or MCC", code_type: DRG, codes: ["473"]}
+  - {category: medicine_surgery, name: "Uterine and adnexa procedures for non-malignancy without CC or MCC", code_type: DRG, codes: ["743"]}
+  - {category: medicine_surgery, name: "Removal of 1 or more breast growth, open procedure", code_type: CPT, codes: ["19120"]}
+  - {category: medicine_surgery, name: "Shaving of shoulder bone using an endoscope", code_type: CPT, codes: ["29826"]}
+  - {category: medicine_surgery, name: "Removal of one knee cartilage using an endoscope", code_type: CPT, codes: ["29881"]}
+  - {category: medicine_surgery, name: "Removal of tonsils and adenoid glands patient younger than age 12", code_type: CPT, codes: ["42820"]}
+  - {category: medicine_surgery, name: "Diagnostic examination of esophagus, stomach, and/or upper small bowel using an endoscope", code_type: CPT, codes: ["43235"]}
+  - {category: medicine_surgery, name: "Biopsy of the esophagus, stomach, and/or upper small bowel using an endoscope", code_type: CPT, codes: ["43239"]}
+  - {category: medicine_surgery, name: "Diagnostic examination of large bowel using an endoscope", code_type: CPT, codes: ["45378"]}
+  - {category: medicine_surgery, name: "Biopsy of large bowel using an endoscope", code_type: CPT, codes: ["45380"]}
+  - {category: medicine_surgery, name: "Removal of polyps or growths of large bowel using an endoscope", code_type: CPT, codes: ["45385"]}
+  - {category: medicine_surgery, name: "Ultrasound examination of lower large bowel using an endoscope", code_type: CPT, codes: ["45391"]}
+  - {category: medicine_surgery, name: "Removal of gallbladder using an endoscope", code_type: CPT, codes: ["47562"]}
+  - {category: medicine_surgery, name: "Repair of groin hernia patient age 5 years or older", code_type: CPT, codes: ["49505"]}
+  - {category: medicine_surgery, name: "Biopsy of prostate gland", code_type: CPT, codes: ["55700"]}
+  - {category: medicine_surgery, name: "Surgical removal of prostate and surrounding lymph nodes using an endoscope", code_type: CPT, codes: ["55866"]}
+  - {category: medicine_surgery, name: "Routine obstetric care for vaginal delivery, including pre- and post-delivery care", code_type: CPT, codes: ["59400"]}
+  - {category: medicine_surgery, name: "Routine obstetric care for cesarean delivery, including pre- and post-delivery care", code_type: CPT, codes: ["59510"]}
+  - {category: medicine_surgery, name: "Routine obstetric care for vaginal delivery after prior cesarean delivery, including pre- and post-delivery care", code_type: CPT, codes: ["59610"]}
+  - {category: medicine_surgery, name: "Injection of substance into spinal canal of lower back or sacrum using imaging guidance", code_type: CPT, codes: ["62322", "62323"]}
+  - {category: medicine_surgery, name: "Injections of anesthetic and/or steroid drug into lower or sacral spine nerve root using imaging guidance", code_type: CPT, codes: ["64483"]}
+  - {category: medicine_surgery, name: "Removal of recurring cataract in lens capsule using laser", code_type: CPT, codes: ["66821"]}
+  - {category: medicine_surgery, name: "Removal of cataract with insertion of lens", code_type: CPT, codes: ["66984"]}
+  - {category: medicine_surgery, name: "Electrocardiogram, routine, with interpretation and report", code_type: CPT, codes: ["93000"]}
+  - {category: medicine_surgery, name: "Insertion of catheter into left heart for diagnosis", code_type: CPT, codes: ["93452"]}
+  - {category: medicine_surgery, name: "Sleep study", code_type: CPT, codes: ["95810"]}
+  - {category: medicine_surgery, name: "Physical therapy, therapeutic exercise", code_type: CPT, codes: ["97110"]}

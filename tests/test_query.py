@@ -3,7 +3,6 @@
 The LLM is a scripted fake here, so these tests are deterministic, free, and run in CI.
 """
 
-import json
 from pathlib import Path
 
 import pytest
@@ -13,7 +12,7 @@ from opencharge.models import payer
 from opencharge.query.catalog import CodeCatalog, tokenize
 from opencharge.query.execute import execute
 from opencharge.query.interpret import Interpretation, InterpretationError, interpret
-from tests.helpers import HospitalSpec, build_database
+from tests.helpers import FakeLLM, HospitalSpec, build_database
 
 # Baltimore-area coordinates (ZIP 21201 is at 39.295, -76.622).
 DOWNTOWN = (39.2924, -76.6135)  # ~0.5 mi from 21201
@@ -91,18 +90,6 @@ def catalog(engine: Engine) -> CodeCatalog:
 def payers(engine: Engine) -> dict[str, str]:
     with engine.connect() as conn:
         return dict(conn.execute(select(payer.c.id, payer.c.canonical_name)).all())
-
-
-class FakeLLM:
-    """Returns scripted replies in order and records every prompt it was sent."""
-
-    def __init__(self, *replies: object) -> None:
-        self.replies = [r if isinstance(r, str) else json.dumps(r) for r in replies]
-        self.calls: list[tuple[str, str]] = []
-
-    def complete_json(self, system: str, user: str) -> str:
-        self.calls.append((system, user))
-        return self.replies.pop(0)
 
 
 EXTRACT_OK = {
@@ -368,3 +355,16 @@ def test_execute_uses_bound_parameters_only(engine: Engine) -> None:
 def test_execute_refuses_an_unconfirmed_interpretation(engine: Engine) -> None:
     with engine.connect() as conn, pytest.raises(ValueError, match="confirm"):
         execute(conn, interpretation(code=None, code_type=None))
+
+
+def test_cash_only_hospital_is_still_a_gap_for_the_named_insurer(tmp_path: Path) -> None:
+    # Real case: Mercy publishes cash prices but no payer rates. Asked about Aetna, Mercy
+    # appears with its cash price AND as an "Aetna rate not listed" gap.
+    engine = build_database(
+        tmp_path,
+        [HospitalSpec("cash-only", *DOWNTOWN, [f"{KNEE_MRI},73721,CPT,outpatient,1200,900,,,,,"])],
+    )
+    with engine.connect() as conn:
+        result = execute(conn, interpretation())
+    assert [(r.hospital_id, r.price_type) for r in result.results] == [("cash-only", "cash")]
+    assert [(g.hospital_id, g.kind) for g in result.gaps] == [("cash-only", "payer_not_listed")]

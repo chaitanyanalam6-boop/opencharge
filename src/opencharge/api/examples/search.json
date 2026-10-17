@@ -1,0 +1,291 @@
+{
+  "status": "ok",
+  "question": "knee MRI near Baltimore with Aetna",
+  "interpretation": {
+    "code_type": "CPT",
+    "code": "73721",
+    "description_terms": [
+      "mri",
+      "knee"
+    ],
+    "payer": "aetna",
+    "setting": "outpatient",
+    "price_types": [
+      "negotiated",
+      "cash"
+    ],
+    "near_zip": "21201",
+    "radius_miles": 25,
+    "confidence": 1.0,
+    "unresolved": []
+  },
+  "message": null,
+  "headline": {
+    "price_type": "negotiated",
+    "lowest_hospital": "MedStar Union Memorial Hospital",
+    "lowest_cents": 24336,
+    "highest_hospital": "Greater Baltimore Medical Center",
+    "highest_cents": 62123,
+    "spread_cents": 37787,
+    "hospitals_with_price": 2
+  },
+  "hospitals": [
+    {
+      "hospital": {
+        "id": "medstar-union-memorial",
+        "name": "MedStar Union Memorial Hospital",
+        "city": "Baltimore",
+        "state": "MD",
+        "distance_miles": 2.5
+      },
+      "prices": {
+        "negotiated": {
+          "count": 22,
+          "with_rate": 22,
+          "lowest": {
+            "price_type": "negotiated",
+            "rate_cents": 24336,
+            "rate_raw": "243.36",
+            "percentage": null,
+            "methodology": "percent of total billed charges",
+            "payer_id": "aetna",
+            "payer_name": "Aetna",
+            "plan_name": "Aetna All HMO and PPO Plans",
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD KNE RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3511,
+              "locator": "standard_charge|Aetna US HealthCare Inc|Aetna All HMO and PPO Plans|negotiated_dollar",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "negotiated",
+            "rate_cents": 152505,
+            "rate_raw": "1525.05",
+            "percentage": null,
+            "methodology": "percent of total billed charges",
+            "payer_id": "aetna",
+            "payer_name": "Aetna",
+            "plan_name": "Aetna Medicare",
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|Aetna Medicare|Aetna Medicare|negotiated_dollar",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        },
+        "cash": {
+          "count": 11,
+          "with_rate": 11,
+          "lowest": {
+            "price_type": "cash",
+            "rate_cents": 23849,
+            "rate_raw": "238.4928",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD KNE RT",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3511,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "cash",
+            "rate_cents": 149455,
+            "rate_raw": "1494.549",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        }
+      },
+      "description_variants": 11,
+      "detail_url": "/api/hospital/medstar-union-memorial/price/73721?code_type=CPT"
+    },
+    {
+      "hospital": {
+        "id": "greater-baltimore-medical-center",
+        "name": "Greater Baltimore Medical Center",
+        "city": "Baltimore",
+        "state": "MD",
+        "distance_miles": 6.6
+      },
+      "prices": {
+        "negotiated": {
+          "count": 1,
+          "with_rate": 1,
+          "lowest": {
+            "price_type": "negotiated",
+            "rate_cents": 62123,
+            "rate_raw": "621.23",
+            "percentage": null,
+            "methodology": "FEE SCHEDULE",
+            "payer_id": "all-payers",
+            "payer_name": "All payers (same rate for every insurer)",
+            "plan_name": "ALL PLANS",
+            "setting": "both",
+            "description": "HC MRI-Hip/Knee/Ankle",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "898a2cd5-d457-4287-b374-193e93f37813",
+              "source_file_url": "https://www.gbmc.org/sites/default/files/documents/52-6049658_gbmc_standardcharges.csv",
+              "published_date": "2026-07-01",
+              "fetched_at": "2026-10-17T02:36:31.248822Z",
+              "row_number": 124600,
+              "locator": "standard_charge|negotiated_dollar",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "5ffee710472ba0f0d4d061db89865dc1adbec5f7ac53568c9598a9fb2f685792"
+            }
+          },
+          "highest": {
+            "price_type": "negotiated",
+            "rate_cents": 62123,
+            "rate_raw": "621.23",
+            "percentage": null,
+            "methodology": "FEE SCHEDULE",
+            "payer_id": "all-payers",
+            "payer_name": "All payers (same rate for every insurer)",
+            "plan_name": "ALL PLANS",
+            "setting": "both",
+            "description": "HC MRI-Hip/Knee/Ankle",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "898a2cd5-d457-4287-b374-193e93f37813",
+              "source_file_url": "https://www.gbmc.org/sites/default/files/documents/52-6049658_gbmc_standardcharges.csv",
+              "published_date": "2026-07-01",
+              "fetched_at": "2026-10-17T02:36:31.248822Z",
+              "row_number": 124600,
+              "locator": "standard_charge|negotiated_dollar",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "5ffee710472ba0f0d4d061db89865dc1adbec5f7ac53568c9598a9fb2f685792"
+            }
+          }
+        },
+        "cash": {
+          "count": 1,
+          "with_rate": 1,
+          "lowest": {
+            "price_type": "cash",
+            "rate_cents": 60881,
+            "rate_raw": "608.8054",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI-Hip/Knee/Ankle",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "898a2cd5-d457-4287-b374-193e93f37813",
+              "source_file_url": "https://www.gbmc.org/sites/default/files/documents/52-6049658_gbmc_standardcharges.csv",
+              "published_date": "2026-07-01",
+              "fetched_at": "2026-10-17T02:36:31.248822Z",
+              "row_number": 124600,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "5ffee710472ba0f0d4d061db89865dc1adbec5f7ac53568c9598a9fb2f685792"
+            }
+          },
+          "highest": {
+            "price_type": "cash",
+            "rate_cents": 60881,
+            "rate_raw": "608.8054",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI-Hip/Knee/Ankle",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "898a2cd5-d457-4287-b374-193e93f37813",
+              "source_file_url": "https://www.gbmc.org/sites/default/files/documents/52-6049658_gbmc_standardcharges.csv",
+              "published_date": "2026-07-01",
+              "fetched_at": "2026-10-17T02:36:31.248822Z",
+              "row_number": 124600,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "5ffee710472ba0f0d4d061db89865dc1adbec5f7ac53568c9598a9fb2f685792"
+            }
+          }
+        }
+      },
+      "description_variants": 1,
+      "detail_url": "/api/hospital/greater-baltimore-medical-center/price/73721?code_type=CPT"
+    }
+  ],
+  "gaps": [
+    {
+      "hospital": {
+        "id": "mercy-medical-center",
+        "name": "Mercy Medical Center",
+        "city": "Baltimore",
+        "state": "MD",
+        "distance_miles": 0.5
+      },
+      "kind": "payer_not_listed",
+      "detail": "The file lists this code, but no aetna rate."
+    }
+  ],
+  "hospitals_in_range": 3,
+  "notice": "Built from public CMS price transparency files; not medical or billing advice."
+}

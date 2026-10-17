@@ -8,7 +8,7 @@ machine-readable files hospitals must publish under federal price transparency r
 
 *Built from public CMS price transparency files; not medical or billing advice.*
 
-**Status:** Phase 3 — validation, quarantine, loading and schema drift detection.
+**Status:** Phase 5 — HTTP API over the natural-language query layer.
 
 ## Run it locally
 
@@ -40,6 +40,32 @@ Running it again on unchanged files is a no-op.
 uv run python -m opencharge.load --all --reprocess        # reload after changing a rule
 uv run python -m opencharge.load --accept-drift <file_id> # accept reviewed column changes
 ```
+
+### Ask a question
+
+```bash
+# needs GROQ_API_KEY in .env
+uv run --env-file .env python -m opencharge.query "knee MRI near Baltimore with Aetna"
+```
+
+### Run the API
+
+```bash
+uv run --env-file .env uvicorn opencharge.api.app:app --reload
+open http://localhost:8000/docs
+```
+
+| Endpoint | What it returns |
+|---|---|
+| `GET /api/search?q=...` | The model's interpretation, prices per hospital, the spread, and gaps |
+| `POST /api/search/run` | Runs a corrected interpretation, no LLM (the "Correct this" button) |
+| `GET /api/procedure/{code}` | Every in-area hospital's prices for one code |
+| `GET /api/hospital/{id}/price/{code}` | Full payer table, provenance, raw row vs normalized record |
+| `GET /api/status` | Last run per hospital, KPIs, shoppable-service coverage, drift |
+| `GET /api/sources/{file_id}` | Source file metadata and link |
+
+Every price in every response carries `provenance`: source file URL, published date, fetch
+time, row number, column or JSON pointer, parser, and sha256.
 
 ### Inspect normalization without loading
 

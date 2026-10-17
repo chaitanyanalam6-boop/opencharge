@@ -365,3 +365,31 @@ can't leak a price (never sees one), and can't reach the database (no SQL, valid
 
 **Revisit when.** Retrieval misses on real questions (the Phase 7 eval measures this);
 options then are more abbreviations, or embedding search over descriptions.
+
+---
+
+## 2026-10-17 — Phase 5: API shape, caching and rate limits
+
+**Decision.**
+- **One row per hospital.** A hospital can publish one code many times (MedStar lists CPT
+  73721 eleven ways, $243.36 for a limited ankle study up to $1,525.05 bilateral). Results
+  show, per hospital and price type, the count and the lowest and highest line, each with its
+  own description and provenance; every line is one click away on
+  `/api/hospital/{id}/price/{code}`.
+- **Gaps for the named insurer.** If someone asks about Aetna, a hospital with only a cash
+  price appears in results *and* as an "Aetna rate not listed" gap.
+- **"Not published" rows.** The hospital detail lists every payer the hospital names anywhere
+  in its file; payers without a rate for this code show `published: false`, never $0.
+- **`POST /api/search/run`** runs a corrected interpretation with no LLM call (the
+  "Correct this" button), validated against the catalog and payer list.
+- **Raw row next to normalized record**: re-read from the local source file when available
+  (CSV under 150 MB); otherwise the stored raw values are shown.
+- **Caching and rate limiting are in-process**: search answers cached 10 minutes, pages 5;
+  search limited to 10/min per client (it costs an LLM call), other reads 120/min. Behind a
+  proxy the client is the first `X-Forwarded-For` hop, trusted only with `TRUST_PROXY=1`.
+- **OpenAPI examples are captured from real responses** by `scripts/refresh_api_examples.py`.
+- **Shoppable-service coverage** uses CMS's list of 70, transcribed from CMS's own PDF into
+  `sources/shoppable_services.yaml` and checked code-by-code against the PDF text.
+
+**Revisit when.** More than one API instance runs (cache and limiter move to Redis), or the
+detail page needs every source row (then store raw rows at load time instead of re-reading).

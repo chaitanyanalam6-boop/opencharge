@@ -1,0 +1,19 @@
+{
+  "id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+  "hospital_id": "medstar-union-memorial",
+  "url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+  "source_page_url": "https://www.medstarhealth.org/price-transparency-disclosures",
+  "file_name": "520591685_medstar_union_memorial_hospital_standardcharges.csv",
+  "published_date": "2026-04-01",
+  "fetched_at": "2026-10-17T02:36:14.645384Z",
+  "age_days": 199,
+  "sha256": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335",
+  "byte_size": 113014791,
+  "format": "csv_wide",
+  "parser_name": "cms_csv_wide_v3",
+  "schema_version": "3.0.0",
+  "status": "loaded",
+  "rows_in": 2565358,
+  "rows_loaded": 2426690,
+  "rows_quarantined": 138668
+}

@@ -185,8 +185,14 @@ def _gaps(
     in_range: dict[str, tuple[str, float | None]],
     results: list[PriceResult],
 ) -> list[Gap]:
-    with_rate = {r.hospital_id for r in results if r.rate_cents is not None}
-    with_lines = {r.hospital_id for r in results}
+    # When an insurer was named, the question is about *its* rate: a hospital that lists only a
+    # cash price is still a gap for that insurer, even though it appears in the results.
+    asked_for_payer = (
+        interpretation.payer is not None and "negotiated" in interpretation.price_types
+    )
+    relevant = [r for r in results if r.price_type == "negotiated"] if asked_for_payer else results
+    with_rate = {r.hospital_id for r in relevant if r.rate_cents is not None}
+    with_lines = {r.hospital_id for r in relevant}
     listing = set(
         conn.scalars(
             select(price_line.c.hospital_id)
@@ -214,7 +220,7 @@ def _gaps(
             )
         elif hospital_id not in with_lines:
             payer = interpretation.payer or "the requested payer"
-            kind, detail = "payer_not_listed", f"The file lists this code, but no rate for {payer}."
+            kind, detail = "payer_not_listed", f"The file lists this code, but no {payer} rate."
         else:
             kind, detail = (
                 "no_rate_published",

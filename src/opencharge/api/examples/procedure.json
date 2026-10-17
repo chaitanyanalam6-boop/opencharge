@@ -1,0 +1,514 @@
+{
+  "code_type": "CPT",
+  "code": "73721",
+  "descriptions": [
+    "BC-MRI LREX JT WO C LTD ANK LT",
+    "BC-MRI LREX JT WO C LTD HIP LT"
+  ],
+  "hospitals": [
+    {
+      "hospital": {
+        "id": "medstar-union-memorial",
+        "name": "MedStar Union Memorial Hospital",
+        "city": "Baltimore",
+        "state": "MD",
+        "distance_miles": null
+      },
+      "prices": {
+        "gross": {
+          "count": 11,
+          "with_rate": 11,
+          "lowest": {
+            "price_type": "gross",
+            "rate_cents": 24336,
+            "rate_raw": "243.36",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD ANK LT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3509,
+              "locator": "standard_charge|gross",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "gross",
+            "rate_cents": 152505,
+            "rate_raw": "1525.05",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|gross",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        },
+        "cash": {
+          "count": 11,
+          "with_rate": 11,
+          "lowest": {
+            "price_type": "cash",
+            "rate_cents": 23849,
+            "rate_raw": "238.4928",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD ANK LT",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3509,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "cash",
+            "rate_cents": 149455,
+            "rate_raw": "1494.549",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        },
+        "negotiated": {
+          "count": 341,
+          "with_rate": 341,
+          "lowest": {
+            "price_type": "negotiated",
+            "rate_cents": 24336,
+            "rate_raw": "243.36",
+            "percentage": null,
+            "methodology": "percent of total billed charges",
+            "payer_id": "hscsn",
+            "payer_name": "Health Services for Children with Special Needs",
+            "plan_name": "HSCSN",
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD HIP RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3510,
+              "locator": "standard_charge|HSCSN|HSCSN|negotiated_dollar",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "negotiated",
+            "rate_cents": 152505,
+            "rate_raw": "1525.05",
+            "percentage": null,
+            "methodology": "percent of total billed charges",
+            "payer_id": "kaiser-permanente",
+            "payer_name": "Kaiser Permanente",
+            "plan_name": "All Kaiser Commercial",
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|Kaiser Permanente|All Kaiser Commercial|negotiated_dollar",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        },
+        "min": {
+          "count": 11,
+          "with_rate": 11,
+          "lowest": {
+            "price_type": "min",
+            "rate_cents": 23849,
+            "rate_raw": "238.4928",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD ANK LT",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3509,
+              "locator": "standard_charge|min",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "min",
+            "rate_cents": 149455,
+            "rate_raw": "1494.549",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [
+              "sub_cent_rounded"
+            ],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|min",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        },
+        "max": {
+          "count": 11,
+          "with_rate": 11,
+          "lowest": {
+            "price_type": "max",
+            "rate_cents": 24336,
+            "rate_raw": "243.36",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "BC-MRI LREX JT WO C LTD ANK RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3512,
+              "locator": "standard_charge|max",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          },
+          "highest": {
+            "price_type": "max",
+            "rate_cents": 152505,
+            "rate_raw": "1525.05",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "outpatient",
+            "description": "MRI LWR EXT JOINT BILAT WO CON",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+              "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+              "published_date": "2026-04-01",
+              "fetched_at": "2026-10-17T02:36:14.645384Z",
+              "row_number": 3506,
+              "locator": "standard_charge|max",
+              "parser": "cms_csv_wide_v3",
+              "schema_version": "3.0.0",
+              "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+            }
+          }
+        }
+      },
+      "description_variants": 11,
+      "detail_url": "/api/hospital/medstar-union-memorial/price/73721?code_type=CPT"
+    },
+    {
+      "hospital": {
+        "id": "mercy-medical-center",
+        "name": "Mercy Medical Center",
+        "city": "Baltimore",
+        "state": "MD",
+        "distance_miles": null
+      },
+      "prices": {
+        "gross": {
+          "count": 2,
+          "with_rate": 2,
+          "lowest": {
+            "price_type": "gross",
+            "rate_cents": 46121,
+            "rate_raw": "461.21",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|gross",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          },
+          "highest": {
+            "price_type": "gross",
+            "rate_cents": 46121,
+            "rate_raw": "461.21",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|gross",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          }
+        },
+        "cash": {
+          "count": 2,
+          "with_rate": 2,
+          "lowest": {
+            "price_type": "cash",
+            "rate_cents": 45199,
+            "rate_raw": "451.99",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          },
+          "highest": {
+            "price_type": "cash",
+            "rate_cents": 45199,
+            "rate_raw": "451.99",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|discounted_cash",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          }
+        },
+        "min": {
+          "count": 2,
+          "with_rate": 2,
+          "lowest": {
+            "price_type": "min",
+            "rate_cents": 46121,
+            "rate_raw": "461.21",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|min",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          },
+          "highest": {
+            "price_type": "min",
+            "rate_cents": 46121,
+            "rate_raw": "461.21",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|min",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          }
+        },
+        "max": {
+          "count": 2,
+          "with_rate": 2,
+          "lowest": {
+            "price_type": "max",
+            "rate_cents": 45199,
+            "rate_raw": "451.99",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|max",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          },
+          "highest": {
+            "price_type": "max",
+            "rate_cents": 45199,
+            "rate_raw": "451.99",
+            "percentage": null,
+            "methodology": null,
+            "payer_id": null,
+            "payer_name": null,
+            "plan_name": null,
+            "setting": "both",
+            "description": "HC MRI LOWER EXTREM JT, W/O CONTRAST RT",
+            "issues": [],
+            "provenance": {
+              "source_file_id": "1121534b-25ae-4114-bf91-23f8919bc510",
+              "source_file_url": "https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx",
+              "published_date": "2026-01-01",
+              "fetched_at": "2026-10-17T02:36:17.030842Z",
+              "row_number": 696,
+              "locator": "standard_charge|max",
+              "parser": "cms_csv_tall_v3",
+              "schema_version": "3.0.0",
+              "checksum": "0e77c0d759ff2c4816929fc53b6cff07d3afef55f49e769677e6ebe128eecec4"
+            }
+          }
+        }
+      },
+      "description_variants": 2,
+      "detail_url": "/api/hospital/mercy-medical-center/price/73721?code_type=CPT"
+    }
+  ],
+  "gaps": [],
+  "notice": "Built from public CMS price transparency files; not medical or billing advice."
+}
