@@ -68,3 +68,38 @@ change. Ingest will also put multi-GB files in `data/raw/`, which iCloud would t
 rewrites. Moving it fixes the cause instead of repeatedly clearing the flag.
 
 **Revisit when.** Never for local dev; deployment runs on Railway, not this machine.
+
+---
+
+## 2026-10-16 — Tables via `create_all` until Phase 3; Alembic arrives with Postgres
+
+**What we found.** Phase 1 only needs a local DuckDB file. Alembic reaches DuckDB through the
+third-party `duckdb-engine` dialect, whose `ALTER TABLE` support is limited, and there is no
+deployed database yet whose data a migration would need to protect.
+
+**Decision.** `metadata.create_all()` creates tables in Phase 1–2. Alembic is introduced in
+Phase 3, alongside `price_line` and the Postgres target, with the then-current schema as its
+baseline migration.
+
+**Why.** Migrations protect data that already exists somewhere you can't just rebuild. Until
+Phase 3 every local database is disposable (`rm data/opencharge.duckdb` and re-ingest).
+
+**Revisit when.** Phase 3 starts, or earlier if a local DuckDB file becomes expensive to rebuild.
+
+---
+
+## 2026-10-16 — Per-hospital fetch outcomes get their own `fetch_attempt` table
+
+**What we found.** Brief §4 has `source_file` (files we hold) and `ingest_run` (one row per
+run), but nowhere to record that one hospital returned 404, was unchanged, or was disallowed by
+robots.txt. Screen 4 needs exactly that per-hospital status.
+
+**Decision.** Add `fetch_attempt`: one row per hospital per run with `outcome`
+(`new` | `unchanged` | `failed` | `blocked`), HTTP status, error text, and a link to the
+`source_file` row when a new file arrived. `source_file` only ever holds files we downloaded.
+
+**Why.** Keeps `source_file` meaning one thing (every row has a real checksum), keeps
+"unchanged" history instead of discarding it, and makes "last outcome per hospital" a single
+query.
+
+**Revisit when.** Fetching moves to a job queue with its own attempt history.
