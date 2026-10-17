@@ -18,6 +18,7 @@ build/
 data/raw/*
 data/quarantine/*
 data/samples/
+data/review/
 !data/raw/.gitkeep
 !data/quarantine/.gitkeep
 *.duckdb
