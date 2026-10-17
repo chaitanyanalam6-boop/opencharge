@@ -42,7 +42,8 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-ra --strict-markers"
 markers = [
-    "integration: hits the network or real large files; skipped in CI by default",
+    "integration: parses the real hospital files in data/raw/; skipped in CI",
+    "llm: calls the real LLM (needs GROQ_API_KEY); skipped in CI",
 ]
 
 [tool.black]

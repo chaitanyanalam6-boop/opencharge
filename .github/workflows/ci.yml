@@ -20,5 +20,5 @@ jobs:
         run: uv run black --check .
       - name: Type check
         run: uv run mypy
-      - name: Test (fast suite; integration tests need network and large files)
-        run: uv run pytest -m "not integration"
+      - name: Test (fast suite; integration and live-LLM tests need local data or secrets)
+        run: uv run pytest -m "not integration and not llm"

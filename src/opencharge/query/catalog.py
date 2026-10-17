@@ -105,8 +105,8 @@ class CatalogEntry:
     code: str
     descriptions: Counter[str] = field(default_factory=Counter)
     hospitals: set[str] = field(default_factory=set)
-    # token -> how many of this code's descriptions contain it
-    token_counts: Counter[str] = field(default_factory=Counter)
+    # Every distinct (description tokens, hospital) pair, for scoring.
+    variants: list[tuple[frozenset[str], str]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -121,9 +121,11 @@ class Candidate:
 class CodeCatalog:
     def __init__(self, entries: dict[tuple[str, str], CatalogEntry]) -> None:
         self.entries = entries
+        # Inverse document frequency over codes: rare words ("extremity") count for more
+        # than common ones ("with").
         documents = Counter[str]()
         for entry in entries.values():
-            documents.update(entry.token_counts.keys())
+            documents.update(set().union(*(tokens for tokens, _ in entry.variants)))
         total = max(len(entries), 1)
         self.idf = {t: math.log(1 + total / n) for t, n in documents.items()}
 
@@ -153,13 +155,20 @@ class CodeCatalog:
         for code_type, code, description, hospital_id, n in conn.execute(query):
             entry = entries.setdefault((code_type, code), CatalogEntry(code_type, code))
             entry.hospitals.add(hospital_id)
-            if description not in entry.descriptions:
-                entry.token_counts.update(set(tokenize(description)))
             entry.descriptions[description] += n
+            entry.variants.append((frozenset(tokenize(description)), hospital_id))
         return cls(entries)
 
     def search(self, terms: list[str], limit: int = 15) -> list[Candidate]:
-        query_tokens = set()
+        """Rank codes by their best-matching description, then by how many hospitals match.
+
+        A code's score is the IDF-weighted overlap of its single best description with the
+        query, plus a bonus for each additional hospital whose own description matches at
+        least half as well. Hospitals describe one code in many ways, so the best variant is
+        what counts; and a code many hospitals publish is more useful to someone comparing
+        prices than one only a single hospital lists.
+        """
+        query_tokens: set[str] = set()
         for term in terms:
             query_tokens.update(tokenize(term))
         # Exact code match: someone asked for "73721" or "J1100" directly.
@@ -167,15 +176,16 @@ class CodeCatalog:
 
         scored: list[tuple[float, CatalogEntry]] = []
         for entry in self.entries.values():
-            variants = len(entry.descriptions)
-            score = sum(
-                self.idf.get(t, 0.0) * entry.token_counts[t] / variants
-                for t in query_tokens
-                if t in entry.token_counts
-            )
-            if score > 0:
-                # Small tie-breaker: codes many hospitals publish are more useful answers.
-                scored.append((score + 0.1 * math.log1p(len(entry.hospitals)), entry))
+            best_by_hospital: dict[str, float] = {}
+            for tokens, hospital_id in entry.variants:
+                overlap = sum(self.idf.get(t, 0.0) for t in query_tokens & tokens)
+                if overlap > best_by_hospital.get(hospital_id, 0.0):
+                    best_by_hospital[hospital_id] = overlap
+            if not best_by_hospital:
+                continue
+            best = max(best_by_hospital.values())
+            agreeing = sum(1 for v in best_by_hospital.values() if v >= best / 2)
+            scored.append((best + 2.0 * math.log1p(agreeing), entry))
         scored.sort(key=lambda pair: pair[0], reverse=True)
 
         ranked = [(math.inf, e) for e in direct] + [p for p in scored if p[1] not in direct]
@@ -185,7 +195,7 @@ class CodeCatalog:
                 e.code,
                 tuple(d for d, _ in e.descriptions.most_common(3)),
                 len(e.hospitals),
-                round(s, 3) if s != math.inf else 999.0,
+                round(score, 3) if score != math.inf else 999.0,
             )
-            for s, e in ranked[:limit]
+            for score, e in ranked[:limit]
         ]
