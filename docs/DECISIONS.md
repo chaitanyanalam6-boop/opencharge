@@ -51,3 +51,20 @@ lets 3.13+ syntax or wheels pass locally and fail on deploy.
 
 **Revisit when.** Railway and every dependency (DuckDB, Polars, Groq SDK) ship stable wheels
 for a newer Python and we have a reason to want its features.
+
+---
+
+## 2026-10-16 — Project lives outside iCloud-synced folders (`~/code/opencharge`)
+
+**What we found.** The repo started in `~/Desktop`, which iCloud "Desktop & Documents" syncs.
+macOS set the `hidden` flag on the editable-install `.pth` file in `.venv`, and current
+Python 3.12 deliberately skips hidden `.pth` files, so `import opencharge` broke with no code
+change. Ingest will also put multi-GB files in `data/raw/`, which iCloud would try to upload.
+
+**Decision.** Move the repo to `~/code/opencharge` and rebuild `.venv` there. Keep
+`pythonpath = ["src"]` in the pytest config as a second line of defence.
+
+**Why.** Build tooling and large data files should not sit in a folder a sync service
+rewrites. Moving it fixes the cause instead of repeatedly clearing the flag.
+
+**Revisit when.** Never for local dev; deployment runs on Railway, not this machine.
