@@ -1,17 +1,21 @@
-"""Row-level validation rules. A line that fails any rule is quarantined, never loaded.
+"""Row-level validation rules.
 
-Each rule has a stable name; quarantined_row.failed_rule records the first one a line
-fails, and `detail` lists all of them. The names come from the brief so the quarantine
-table, the status page and the README all speak the same language.
+Each rule has a stable name (from the brief) and a severity:
+  reject  the line is quarantined, never loaded. quarantined_row.failed_rule records the first
+          rejecting rule a line fails, and `detail` lists all of them.
+  flag    the line loads, carrying the rule name in its `issues`, so the UI can warn about it.
+          Used where the value is suspicious but may be true: hiding a real price would be
+          worse than showing it with a warning (see docs/DECISIONS.md).
 """
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from enum import StrEnum
 
 from opencharge.normalize.record import NormalizedPriceLine
 from opencharge.parse.records import PriceType
 
-# Anything above this is almost certainly a data error (e.g. cents written as dollars).
+# Above this a rate is suspicious (e.g. cents written as dollars), though not always wrong.
 MAX_SANE_RATE_CENTS = 5_000_000 * 100
 
 # Rule names that do not come from checking a single normalized line.
@@ -19,11 +23,17 @@ ROW_MISALIGNED = "row_misaligned"  # the parser could not read the row safely
 SCHEMA_DRIFT = "schema_drift"  # the value sits in a column the previous file did not have
 
 
+class Severity(StrEnum):
+    REJECT = "reject"
+    FLAG = "flag"
+
+
 @dataclass(frozen=True)
 class Rule:
     name: str
     description: str
     passes: Callable[[NormalizedPriceLine], bool]
+    severity: Severity = Severity.REJECT
 
 
 RULES: tuple[Rule, ...] = (
@@ -45,7 +55,10 @@ RULES: tuple[Rule, ...] = (
     Rule(
         "rate_within_sane_bounds",
         "A dollar rate, if given, is at most $5,000,000.",
+        # Flagged, not rejected: Novant's Elevidys gene therapy is genuinely published at
+        # $6.0-6.3M, and hiding a true price is worse than showing it with a warning.
         lambda line: line.rate_cents is None or line.rate_cents <= MAX_SANE_RATE_CENTS,
+        Severity.FLAG,
     ),
     Rule(
         "price_type_known",
@@ -62,6 +75,6 @@ RULES: tuple[Rule, ...] = (
 RULE_NAMES = tuple(rule.name for rule in RULES) + (ROW_MISALIGNED, SCHEMA_DRIFT)
 
 
-def failed_rules(line: NormalizedPriceLine) -> list[str]:
-    """Names of every rule the line fails, in rule order. Empty means the line is valid."""
-    return [rule.name for rule in RULES if not rule.passes(line)]
+def failed_rules(line: NormalizedPriceLine, severity: Severity = Severity.REJECT) -> list[str]:
+    """Names of every rule of this severity the line fails, in rule order."""
+    return [rule.name for rule in RULES if rule.severity is severity and not rule.passes(line)]

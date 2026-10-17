@@ -10,6 +10,7 @@ file did not have is quarantined (rule `schema_drift`) instead of being trusted.
 else in the file still loads.
 """
 
+import dataclasses
 import hashlib
 import json
 import logging
@@ -37,7 +38,7 @@ from opencharge.normalize.record import NormalizedPriceLine, normalize_line
 from opencharge.normalize.text import parse_published_date
 from opencharge.parse import get_parser
 from opencharge.parse.records import RawPriceLine, RejectedRow
-from opencharge.validate.rules import ROW_MISALIGNED, SCHEMA_DRIFT, failed_rules
+from opencharge.validate.rules import ROW_MISALIGNED, SCHEMA_DRIFT, Severity, failed_rules
 
 log = logging.getLogger(__name__)
 
@@ -220,6 +221,9 @@ def process_file(
                 payload = raw_payload(item) | {"normalization_issues": list(line.issues)}
                 quarantine(item.source_row_number, item.source_locator, payload, rules)
             else:
+                flags = failed_rules(line, Severity.FLAG)
+                if flags:
+                    line = dataclasses.replace(line, issues=line.issues + tuple(flags))
                 loaded.append(price_line_row(line, file, schema_version, now))
                 result.rows_loaded += 1
         flush()

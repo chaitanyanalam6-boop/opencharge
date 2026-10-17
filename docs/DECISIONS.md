@@ -303,3 +303,20 @@ price without provenance, so "zero bad rows in price_line" doesn't depend on Pyt
 
 **Revisit when.** We want price history across file versions (then supersede by flag, not
 delete), or Postgres load time matters (then COPY).
+
+---
+
+## 2026-10-16 — `rate_within_sane_bounds` flags instead of quarantining
+
+**What we found.** The brief's $5M ceiling quarantined 27 Novant lines. All were Elevidys
+(delandistrogene moxeparvovec), a Duchenne gene therapy published at $6.0–6.3M: real charges.
+
+**Decision.** Rules now have a severity. `rate_within_sane_bounds` is a *flag*: the line
+loads with the rule name in `price_line.issues`, and the UI shows a warning. All other rules
+still reject (quarantine).
+
+**Why.** "We never estimate" also means we never hide what a hospital published. A true price
+shown with a warning is better than a true price silently missing; a typo shown with a warning
+and a link to its source row is still traceable.
+
+**Revisit when.** Flagged lines turn out to be mostly typos in practice.

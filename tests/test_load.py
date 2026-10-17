@@ -43,7 +43,6 @@ CORRUPTED_ROWS = [
     ("SUPPLY ITEM,N/A,CPT,outpatient,15,,,,,", "code_present"),
     ("MYSTERY,ABCDE,CPT,outpatient,100,,,,,", "code_format_valid"),
     ("REFUND?,73722,CPT,outpatient,,,Aetna,PPO,(12.50),fee schedule", "rate_non_negative"),
-    ("TYPO,73723,CPT,outpatient,9999999999,,,,,", "rate_within_sane_bounds"),
     (
         "CT HEAD,70450,CPT,outpatient,,,Mystery Health,Gold,100,fee schedule",
         "payer_resolved_if_negotiated",
@@ -152,6 +151,17 @@ def test_quarantined_row_keeps_the_raw_payload(engine: Engine, tmp_path: Path) -
         "100",
     ]
     assert rows["code_present"].source_locator == "standard_charge|gross"
+
+
+def test_implausibly_high_rate_loads_flagged_not_hidden(engine: Engine, tmp_path: Path) -> None:
+    # Real case: Novant publishes Elevidys (gene therapy) at $6.3M. A suspicious price is
+    # shown with a warning, not quarantined.
+    ingest(engine, tmp_path, tall_file(["GENE THERAPY,J1413,HCPCS,outpatient,6308973.12,,,,,"]))
+    with engine.connect() as conn:
+        line = conn.execute(select(price_line)).mappings().one()
+    assert line["rate_cents"] == 630897312
+    assert "rate_within_sane_bounds" in line["issues"]
+    assert count(engine, quarantined_row) == 0
 
 
 def test_loaded_lines_carry_full_provenance(engine: Engine, tmp_path: Path) -> None:
