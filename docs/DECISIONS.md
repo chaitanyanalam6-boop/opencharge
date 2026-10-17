@@ -320,3 +320,48 @@ shown with a warning is better than a true price silently missing; a typo shown 
 and a link to its source row is still traceable.
 
 **Revisit when.** Flagged lines turn out to be mostly typos in practice.
+
+---
+
+## 2026-10-16 — Bug: declared code types were reinterpreted by shape
+
+**What we found.** GWU's "Obstetrical ultrasound" carried code `470` declared as **EAPG**.
+Our classifier sent every declared-but-unsearched type (EAPG, APC, APR-DRG) through the
+shape heuristics meant for *undeclared* codes, so a 3-digit EAPG or APR-DRG became MS-DRG 470
+(major joint replacement). 12,852 GWU lines were mis-typed as DRG.
+
+**Decision.** Shape heuristics apply only when the hospital declared no type at all. A
+declared type we don't search on is always LOCAL, flagged `unsearched_code_type:<type>`.
+Regression tests cover EAPG 470 and APR-DRG 470. All files reprocessed.
+
+---
+
+## 2026-10-16 — Phase 4: two LLM calls around plain retrieval; the LLM never sees a price
+
+**What we found.** Hospitals describe the same procedure in incompatible abbreviations:
+knee MRI (CPT 73721) is "MRI LWR EXT JOINT WO CON", "BC-MRI LREX JT WO C LTD KNE LT",
+"MRI EXT LOW JNT W/O CON", "HC MRI-Hip/Knee/Ankle". Most never say "knee".
+
+**Decision.**
+1. *Extract* (LLM): filters plus search terms in hospital vocabulary ("knee MRI" →
+   mri, knee, lower extremity, joint). It has no field for a code or a price.
+2. *Retrieve* (no LLM): a catalog of every searchable code's real descriptions across
+   in-area hospitals, abbreviations normalized on both sides, TF-IDF-style ranking.
+3. *Choose* (LLM): one code from the shortlist, or none, with a confidence.
+- Strict Pydantic models: unknown fields rejected, payer must be a canonical id we hold,
+  code must be on the shortlist, no `$` anywhere in free text, terms are plain words.
+  One retry with the validation error, then a user-safe failure.
+- The shortlist shown to the LLM has descriptions and hospital counts, never prices.
+  A test checks that no price string appears in any prompt.
+- `needs_confirmation` when the code is missing, confidence < 0.7, or anything is unresolved.
+- Execution: SQLAlchemy Core, bound parameters only, scoped through `searchable_hospitals()`.
+  A requested insurer also matches `all-payers` rates. Gaps are returned per in-range
+  hospital: `not_in_file`, `payer_not_listed`, `no_rate_published`.
+- Distances: Census 2025 ZCTA centroids (DE/DC/MD/VA/WV) and haversine. No geocoding API.
+- Two mutation tests: removing the service-area scope, or the shortlist check, fails a test.
+
+**Why.** The model's job is translation, not knowledge: it can't invent a code (shortlist),
+can't leak a price (never sees one), and can't reach the database (no SQL, validated enums).
+
+**Revisit when.** Retrieval misses on real questions (the Phase 7 eval measures this);
+options then are more abbreviations, or embedding search over descriptions.

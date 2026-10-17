@@ -98,6 +98,11 @@ def test_parse_percentage(raw: str | None, expected: Decimal | None) -> None:
         ("G0378", "", CodeType.HCPCS, "G0378", "undeclared_code_type"),  # brief: G/J -> HCPCS
         ("470", "", CodeType.DRG, "470", "undeclared_code_type"),  # brief: 3 digits -> DRG
         ("X99", "APC", CodeType.LOCAL, "X99", "unsearched_code_type:APC"),
+        # Declared types are never reinterpreted by shape (GWU: EAPG 470 is obstetrical
+        # ultrasound, not MS-DRG 470; an APR-DRG 470 is not MS-DRG 470 either).
+        ("470", "EAPG", CodeType.LOCAL, "470", "unsearched_code_type:EAPG"),
+        ("470", "APR-DRG", CodeType.LOCAL, "470", "unsearched_code_type:APR-DRG"),
+        ("27447", "APC", CodeType.LOCAL, "27447", "unsearched_code_type:APC"),
     ],
 )
 def test_classify(

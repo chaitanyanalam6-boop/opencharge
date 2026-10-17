@@ -86,8 +86,14 @@ def classify(code: str, declared: str) -> tuple[CodeType, str, str | None]:
     if kind in _DECLARED:
         return _DECLARED[kind], value, None
 
-    # Nothing usable declared (blank, or a type we don't search on such as APC or HIPPS).
-    issue = "undeclared_code_type" if not kind else f"unsearched_code_type:{kind}"
+    if kind:
+        # A type we don't search on (APC, EAPG, APR-DRG, HIPPS, ...). The hospital told us what
+        # it is, so we never reinterpret it by shape: GWU's EAPG "470" (obstetrical ultrasound)
+        # must not become MS-DRG 470 (joint replacement).
+        return CodeType.LOCAL, value, f"unsearched_code_type:{kind}"
+
+    # Nothing declared at all: fall back to the code's shape (brief §5, Phase 2).
+    issue = "undeclared_code_type"
     if _CPT.match(value) and value.isdigit():
         return CodeType.CPT, value, issue
     if _HCPCS.match(value):
