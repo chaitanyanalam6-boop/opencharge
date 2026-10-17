@@ -41,6 +41,30 @@
         "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
       }
     },
+    "typical": {
+      "price_type": "gross",
+      "rate_cents": 24336,
+      "rate_raw": "243.36",
+      "percentage": null,
+      "methodology": null,
+      "payer_id": null,
+      "payer_name": null,
+      "plan_name": null,
+      "setting": "outpatient",
+      "description": "BC-MRI LREX JT WO C LTD KNE RT",
+      "issues": [],
+      "provenance": {
+        "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+        "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+        "published_date": "2026-04-01",
+        "fetched_at": "2026-10-17T02:36:14.645384Z",
+        "row_number": 3511,
+        "locator": "standard_charge|gross",
+        "parser": "cms_csv_wide_v3",
+        "schema_version": "3.0.0",
+        "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+      }
+    },
     "highest": {
       "price_type": "gross",
       "rate_cents": 152505,
@@ -89,6 +113,32 @@
         "published_date": "2026-04-01",
         "fetched_at": "2026-10-17T02:36:14.645384Z",
         "row_number": 3509,
+        "locator": "standard_charge|discounted_cash",
+        "parser": "cms_csv_wide_v3",
+        "schema_version": "3.0.0",
+        "checksum": "300287d74ffa14e6cf0bc0935ab442732f776e6d9404c6b5bb93b717dd8be335"
+      }
+    },
+    "typical": {
+      "price_type": "cash",
+      "rate_cents": 23849,
+      "rate_raw": "238.4928",
+      "percentage": null,
+      "methodology": null,
+      "payer_id": null,
+      "payer_name": null,
+      "plan_name": null,
+      "setting": "outpatient",
+      "description": "BC-MRI LREX JT WO C LTD HIP LT",
+      "issues": [
+        "sub_cent_rounded"
+      ],
+      "provenance": {
+        "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
+        "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
+        "published_date": "2026-04-01",
+        "fetched_at": "2026-10-17T02:36:14.645384Z",
+        "row_number": 3507,
         "locator": "standard_charge|discounted_cash",
         "parser": "cms_csv_wide_v3",
         "schema_version": "3.0.0",

@@ -324,8 +324,9 @@ def run_search(s: State, interpretation: Interpretation, question: str | None) -
             interpretation=interpretation,
             message="Please confirm or correct this interpretation before we search.",
         )
+    payer_name = s.payer_names.get(interpretation.payer) if interpretation.payer else None
     with s.engine.connect() as conn:
-        result = execute(conn, interpretation)
+        result = execute(conn, interpretation, payer_name)
     rows = views.hospital_prices(
         result.results, s.hospitals, s.payer_names, interpretation.price_types
     )

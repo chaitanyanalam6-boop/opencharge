@@ -126,14 +126,18 @@ def test_one_row_per_hospital_with_lowest_and_highest(client: TestClient) -> Non
         85000,
         140000,
     )
+    assert negotiated["typical"]["rate_cents"] == 85000  # lower middle of [850, 1400]
     assert downtown["description_variants"] == 2
     assert downtown["detail_url"] == "/api/hospital/downtown-hospital/price/73721?code_type=CPT"
 
 
 def test_headline_states_the_spread(client: TestClient) -> None:
     body = client.get("/api/search", params={"q": "knee MRI with Aetna"}).json()
+    # Downtown publishes $850 and $1,400 (a bilateral variant); its typical line is the lower
+    # middle, $850, a real published line. Towson's only line is $1,300.
     assert body["headline"] == {
         "price_type": "negotiated",
+        "basis": "typical",
         "lowest_hospital": "Downtown Hospital",
         "lowest_cents": 85000,
         "highest_hospital": "Towson Hospital",
@@ -352,3 +356,36 @@ def test_openapi_documents_every_endpoint_with_real_examples(client: TestClient)
     ]["example"]
     assert search_example["interpretation"]["code"] == "73721"
     assert "medstarhealth.org" in str(search_example)  # captured from a real hospital file
+
+
+def test_typical_price_is_a_real_published_line_never_an_average(engine: Engine) -> None:
+    from opencharge.api.views import summarize
+    from opencharge.query.execute import execute
+    from opencharge.query.interpret import Interpretation
+
+    with engine.connect() as conn:
+        result = execute(
+            conn,
+            Interpretation(
+                code_type="CPT",
+                code="73721",
+                description_terms=["mri"],
+                payer="aetna",
+                setting=None,
+                price_types=["negotiated"],
+                near_zip=None,
+                radius_miles=25,
+                confidence=1.0,
+                unresolved=[],
+            ),
+        )
+    lines = [r for r in result.results if r.hospital_id == "downtown-hospital"]
+    typical = summarize(lines, {}).typical
+    assert typical is not None
+    assert typical.rate_cents in {r.rate_cents for r in lines}  # 112,500 (the mean) would fail
+    assert typical.provenance.row_number in {r.provenance.row_number for r in lines}
+
+
+def test_gap_names_the_insurer(client: TestClient) -> None:
+    body = client.get("/api/search", params={"q": "knee MRI with Aetna"}).json()
+    assert body["gaps"][0]["detail"] == "The file lists this code, but no Aetna rate."

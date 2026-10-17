@@ -115,7 +115,10 @@ def _filters(interpretation: Interpretation, hospital_ids: list[str]) -> list[Co
     return conditions
 
 
-def execute(conn: Connection, interpretation: Interpretation) -> SearchResult:
+def execute(
+    conn: Connection, interpretation: Interpretation, payer_name: str | None = None
+) -> SearchResult:
+    """Run a validated interpretation. `payer_name` is the insurer's display name, for gap text."""
     if interpretation.code is None or interpretation.code_type is None:
         raise ValueError("cannot execute an interpretation without a code; confirm it first")
 
@@ -175,7 +178,7 @@ def execute(conn: Connection, interpretation: Interpretation) -> SearchResult:
         interpretation,
         len(in_range),
         tuple(results),
-        tuple(_gaps(conn, interpretation, in_range, results)),
+        tuple(_gaps(conn, interpretation, in_range, results, payer_name)),
     )
 
 
@@ -184,6 +187,7 @@ def _gaps(
     interpretation: Interpretation,
     in_range: dict[str, tuple[str, float | None]],
     results: list[PriceResult],
+    payer_name: str | None = None,
 ) -> list[Gap]:
     # When an insurer was named, the question is about *its* rate: a hospital that lists only a
     # cash price is still a gap for that insurer, even though it appears in the results.
@@ -219,7 +223,7 @@ def _gaps(
                 f"{interpretation.code_type} {interpretation.code} is not in this hospital's file.",
             )
         elif hospital_id not in with_lines:
-            payer = interpretation.payer or "the requested payer"
+            payer = payer_name or interpretation.payer or "the requested payer"
             kind, detail = "payer_not_listed", f"The file lists this code, but no {payer} rate."
         else:
             kind, detail = (

@@ -80,10 +80,13 @@ def price_out(r: PriceResult, payer_names: dict[str, str]) -> PriceOut:
 
 
 def summarize(lines: list[PriceResult], payer_names: dict[str, str]) -> PriceSummary:
-    priced = [r for r in lines if r.rate_cents is not None]
-    lowest = min(priced, key=lambda r: r.rate_cents or 0) if priced else None
-    highest = max(priced, key=lambda r: r.rate_cents or 0) if priced else None
+    priced = sorted((r for r in lines if r.rate_cents is not None), key=lambda r: r.rate_cents or 0)
+    lowest = priced[0] if priced else None
+    highest = priced[-1] if priced else None
+    # Lower middle, so "typical" is always one real published line with its own provenance.
+    typical = priced[(len(priced) - 1) // 2] if priced else None
     return PriceSummary(
+        typical=price_out(typical, payer_names) if typical else None,
         count=len(lines),
         with_rate=len(priced),
         lowest=(
@@ -146,20 +149,20 @@ def primary_price_type(rows: list[HospitalPrices], price_types: Sequence[str]) -
 
 def _sort_key(h: HospitalPrices, primary: str | None) -> tuple[int, int, float]:
     summary = h.prices.get(primary) if primary else None
-    cents = summary.lowest.rate_cents if summary and summary.lowest else None
+    cents = summary.typical.rate_cents if summary and summary.typical else None
     return (cents is None, cents or 0, h.hospital.distance_miles or 0.0)
 
 
 def headline(rows: list[HospitalPrices], price_types: Sequence[str]) -> Headline | None:
-    """Cheapest vs most expensive hospital for the primary price type."""
+    """Hospital with the lowest vs highest *typical* price for the primary price type."""
     primary = primary_price_type(rows, price_types)
     if primary is None:
         return None
     priced: list[tuple[str, int]] = []
     for h in rows:
         summary = h.prices.get(primary)
-        if summary and summary.lowest and summary.lowest.rate_cents is not None:
-            priced.append((h.hospital.name, summary.lowest.rate_cents))
+        if summary and summary.typical and summary.typical.rate_cents is not None:
+            priced.append((h.hospital.name, summary.typical.rate_cents))
     low = min(priced, key=lambda p: p[1])
     high = max(priced, key=lambda p: p[1])
     return Headline(

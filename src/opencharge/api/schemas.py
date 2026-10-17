@@ -46,6 +46,12 @@ class PriceSummary(BaseModel):
     count: int = Field(description="Published lines of this type for the code.")
     with_rate: int = Field(description="How many of those carry a dollar amount.")
     lowest: PriceOut | None
+    typical: PriceOut | None = Field(
+        description=(
+            "The middle published line by price (the lower middle when the count is even). "
+            "Always a real line from the file, never an average."
+        )
+    )
     highest: PriceOut | None
 
 
@@ -71,7 +77,11 @@ class GapOut(BaseModel):
 
 
 class Headline(BaseModel):
+    """Compares each hospital's *typical* line, not its cheapest: one code can cover several
+    variants (a limited hip MRI and a bilateral knee MRI are both CPT 73721)."""
+
     price_type: str
+    basis: str = "typical"
     lowest_hospital: str
     lowest_cents: int
     highest_hospital: str
