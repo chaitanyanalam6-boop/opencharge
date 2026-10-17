@@ -32,6 +32,8 @@ packages = ["src/opencharge"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Import from src/ directly so tests do not depend on the editable-install .pth file.
+pythonpath = ["src"]
 addopts = "-ra --strict-markers"
 markers = [
     "integration: hits the network or real large files; skipped in CI by default",
