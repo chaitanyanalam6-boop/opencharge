@@ -12,6 +12,13 @@
 # Patterns are Python regular expressions, case-insensitive.
 
 payers:
+  # A rate the hospital publishes for every payer at once. In Maryland this is the normal
+  # case: the state sets one rate for all insurers (GBMC "ALL PAYERS", UM St. Joseph
+  # "[All Payers"). Searches for any insurer can show it, labelled as an all-payer rate.
+  - id: all-payers
+    name: All payers (same rate for every insurer)
+    patterns: ['^\[?all payers\b']
+
   - id: aetna
     name: Aetna
     patterns: ['\baetna\b']
@@ -29,7 +36,12 @@ payers:
     name: UnitedHealthcare
     # MAMSI (Mid Atlantic Medical Services) and United Behavioral Health are UnitedHealth
     # Group subsidiaries that hospitals still list by their own names.
-    patterns: ['united ?health ?care', '\buhc\b', '^mamsi\b', 'united behavioral health']
+    # MD-IPA is MAMSI's Maryland IPA plan (GWU lists it as its own payer).
+    patterns: ['united ?health ?care', '\buhc\b', '^mamsi\b', '^mdipa$', 'united behavioral health']
+
+  - id: anthem
+    name: Anthem Blue Cross Blue Shield
+    patterns: ['^anthem\b']
 
   - id: kaiser-permanente
     name: Kaiser Permanente

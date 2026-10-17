@@ -280,3 +280,55 @@ def test_text_formats_decimals_without_exponent() -> None:
 def test_unknown_parser_is_an_error() -> None:
     with pytest.raises(ValueError, match="unknown parser"):
         get_parser("xml", JSON)
+
+
+def test_wide_payer_notes_attach_to_their_payer() -> None:
+    # Regression: the plan name at the end of "additional_payer_notes|<payer>|<plan>" used to
+    # be lowercased, so notes never matched their payer's rate columns.
+    hernia = [
+        x
+        for x in price_lines("cms_csv_wide_v3", WIDE)
+        if x.description == "Inguinal hernia repair" and x.price_type is PriceType.NEGOTIATED
+    ]
+    notes = {(x.payer_name, x.plan_name): x.notes for x in hernia}
+    assert (
+        notes[("Region Health Insurance", "HMO")]
+        == "This service paid at 140% of the OPPS APC rate."
+    )
+    assert notes[("Platform Health Insurance", "PPO")] is None
+
+
+def test_wide_payer_names_containing_pipes(tmp_path: Path) -> None:
+    # Seen in George Washington University Hospital's file.
+    header = (
+        "description,code|1,code|1|type,setting,standard_charge|gross,"
+        "standard_charge|AETNA | MANAGED_CARE|negotiated_dollar,"
+        "standard_charge|AMERIHEALTH | ALLIANCE|MEDICAID|negotiated_dollar,"
+        "additional_payer_notes|AMERIHEALTH | ALLIANCE|MEDICAID\n"
+    )
+    row = "CT HEAD,70450,CPT,outpatient,1000,410.5,388,paid per fee schedule\n"
+    parser = get_parser(
+        "cms_csv_wide_v3", write(tmp_path, "gwu.csv", (META + header + row).encode())
+    )
+    negotiated = [
+        (x.payer_name, x.plan_name, x.dollar, x.notes, x.source_locator)
+        for x in parser.lines()
+        if isinstance(x, RawPriceLine) and x.price_type is PriceType.NEGOTIATED
+    ]
+    assert negotiated == [
+        (
+            "AETNA",
+            "MANAGED_CARE",
+            "410.5",
+            None,
+            "standard_charge|AETNA|MANAGED_CARE|negotiated_dollar",
+        ),
+        (
+            "AMERIHEALTH",
+            "ALLIANCE|MEDICAID",
+            "388",
+            "paid per fee schedule",
+            "standard_charge|AMERIHEALTH|ALLIANCE|MEDICAID|negotiated_dollar",
+        ),
+    ]
+    assert parser.quirks["payer_plan_header_ambiguous"] == 2  # the rate column and its notes

@@ -27,8 +27,11 @@ class CanonicalPayer:
 
 
 def clean_payer_text(text: str) -> str:
-    """'CAREFIRST [201]' -> 'carefirst'. Lowercase, bracketed codes removed, spaces collapsed."""
-    return re.sub(r"\s+", " ", _BRACKETED.sub(" ", text)).strip().lower()
+    """'CAREFIRST [201]' -> 'carefirst'; 'UNITED_HEALTH_CARE' -> 'united health care'.
+
+    Lowercase, bracketed internal codes removed, underscores and runs of spaces collapsed.
+    """
+    return re.sub(r"[\s_]+", " ", _BRACKETED.sub(" ", text)).strip().lower()
 
 
 class PayerMatcher:

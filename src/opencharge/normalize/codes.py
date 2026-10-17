@@ -8,6 +8,7 @@ to shape alone (5-digit numeric -> CPT, letter + 4 digits -> HCPCS, 3 digits -> 
 import re
 from enum import StrEnum
 
+from opencharge.normalize.money import NULL_TOKENS
 from opencharge.parse.records import Code
 
 
@@ -40,8 +41,11 @@ _DECLARED: dict[str, CodeType] = {
     "CDM": CodeType.LOCAL,
     "LOCAL": CodeType.LOCAL,
 }
-# CMS lists several DRG families; for search they are all DRGs.
-_DRG_FAMILIES = {"DRG", "MS-DRG", "APR-DRG", "AP-DRG", "R-DRG", "S-DRG", "APS-DRG", "TRIS-DRG"}
+# Only Medicare's MS-DRG numbering counts as "DRG". Other families (APR-DRG, AP-DRG, ...)
+# reuse the same numbers for different things: MS-DRG 470 is a joint replacement, APR-DRG
+# 470 is not. Merging them would let a DRG search return unrelated procedures, so the other
+# families fall through to LOCAL, flagged as unsearched.
+_DRG_FAMILIES = {"DRG", "MS-DRG"}
 
 # When an item has several codes, the one a person would search by wins.
 PRIORITY = (CodeType.CPT, CodeType.HCPCS, CodeType.DRG, CodeType.NDC, CodeType.REV, CodeType.LOCAL)
@@ -94,6 +98,13 @@ def classify(code: str, declared: str) -> tuple[CodeType, str, str | None]:
     return CodeType.LOCAL, value, issue
 
 
+def is_placeholder_code(code: str) -> bool:
+    """True for values that mean "no code": Mercy's RC "0", GBMC's CPT "N/A", GWU's "-" and
+    "XXXXX". A placeholder must never become a searchable code."""
+    value = code.strip().lower()
+    return value in NULL_TOKENS or set(value) <= {"0"} or set(value) <= {"x"}
+
+
 def primary_code(
     codes: tuple[Code, ...],
 ) -> tuple[tuple[CodeType, str] | None, tuple[tuple[CodeType, str], ...], tuple[str, ...]]:
@@ -101,9 +112,7 @@ def primary_code(
     classified = []
     issues = []
     for c in codes:
-        if set(c.code.strip()) <= {"0"}:
-            # Mercy writes RC "0" on 731 pharmacy rows to mean "no revenue code". A
-            # placeholder must never become a searchable code.
+        if is_placeholder_code(c.code):
             issues.append(f"placeholder_code_ignored ({c.type or 'no type'} {c.code})")
             continue
         code_type, value, issue = classify(c.code, c.type)

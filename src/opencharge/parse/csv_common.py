@@ -30,15 +30,32 @@ ITEM_PRICE_COLUMNS = {
 _CODE_COLUMN = re.compile(r"^code\|(\d+)$")
 
 
+# Template keywords that can end a column name. Only these are lowercased: the last segment
+# of "additional_payer_notes|Aetna|PPO" is a plan name and must keep its spelling.
+_STRUCTURAL_SUFFIXES = frozenset(
+    {
+        "type",
+        "gross",
+        "discounted_cash",
+        "min",
+        "max",
+        "negotiated_dollar",
+        "negotiated_percentage",
+        "negotiated_algorithm",
+        "methodology",
+    }
+)
+
+
 def normalize_column(name: str) -> str:
     """'code | 1 ' -> 'code|1'. CMS's own sample has spaces around pipes; GBMC has trailing ones.
 
-    Only whitespace and the case of the first and last segments change: payer and plan
+    Whitespace around pipes is removed and template keywords are lowercased; payer and plan
     names in wide headers keep their spelling.
     """
     parts = [part.strip() for part in name.replace("﻿", "").split("|")]
     parts[0] = parts[0].lower()
-    if len(parts) > 1:
+    if len(parts) > 1 and parts[-1].lower() in _STRUCTURAL_SUFFIXES:
         parts[-1] = parts[-1].lower()
     return "|".join(parts)
 

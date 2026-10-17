@@ -298,3 +298,40 @@ def test_unknown_payer_is_kept_and_flagged(payers: PayerMatcher) -> None:
     assert line.payer_id is None
     assert line.payer_name_raw == "PFC"
     assert "payer_unresolved" in line.issues
+
+
+# --- rules added after onboarding GBMC and GWU ------------------------------------------
+
+
+def test_apr_drg_is_not_merged_with_ms_drg() -> None:
+    # GWU: APR-DRG 589 at severity 4. APR-DRG numbers mean different things from MS-DRG
+    # numbers, so it must never come out as code_type DRG.
+    code_type, code, issue = classify("589-4", "APR-DRG")
+    assert code_type is CodeType.LOCAL
+    assert code == "589-4"
+    assert issue == "unsearched_code_type:APR-DRG"
+
+
+@pytest.mark.parametrize("placeholder", ["N/A", "-", "XXXXX", "0", "000"])
+def test_placeholder_codes_are_never_searchable(placeholder: str) -> None:
+    # GBMC writes CPT "N/A"; GWU writes HCPCS "-" and "XXXXX"; Mercy writes RC "0".
+    primary, _, issues = primary_code((Code(placeholder, "CPT"),))
+    assert primary is None
+    assert issues[0].startswith("placeholder_code_ignored")
+
+
+@pytest.mark.parametrize(
+    ("payer", "plan", "expected"),
+    [
+        ("UNITED_HEALTH_CARE", "MANAGED_CARE", "unitedhealthcare"),  # GWU underscores
+        ("ANTHEM_BLUE_CROSS_BLUE_SHIELD", "PPO", "anthem"),
+        ("MDIPA", "MANAGED_CARE", "unitedhealthcare"),
+        ("ALL PAYERS", "ALL PLANS", "all-payers"),  # GBMC
+        ("[All Payers", "[All Plans]", "all-payers"),  # UM St. Joseph's header
+        ("MEDSTAR", "MEDICAID", None),  # which MedStar plan? Not guessed.
+    ],
+)
+def test_payer_matching_new_hospitals(
+    payers: PayerMatcher, payer: str, plan: str, expected: str | None
+) -> None:
+    assert payers.match(payer, plan) == expected

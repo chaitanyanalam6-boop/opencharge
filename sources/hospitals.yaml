@@ -86,3 +86,53 @@ hospitals:
     notes: >-
       JSON v3.0.0, ~284 MB. Many payer entries publish only standard_charge_percentage
       (no dollar amount); those must load as a NULL rate, never as a price.
+
+  - id: greater-baltimore-medical-center
+    name: Greater Baltimore Medical Center
+    ccn: "210044"
+    address:
+      street: 6701 North Charles Street
+      # CMS lists the city as Baltimore; the Census geocoder and GBMC's own file say Towson.
+      # Same street address; we keep CMS's record for consistency with every other entry.
+      city: Baltimore
+      state: MD
+      zip: "21204"
+    lat: 39.389918
+    lon: -76.627996
+    type: Acute Care Hospitals
+    in_service_area: true
+    format: csv_tall
+    parser: cms_csv_tall_v3
+    mrf_url: https://www.gbmc.org/sites/default/files/documents/52-6049658_gbmc_standardcharges.csv
+    discovery:
+      method: cms_hpt_txt
+      index_url: https://www.gbmc.org/cms-hpt.txt
+      source_page_url: https://www.gbmc.org/billing-estimates/billing-and-financial-support/hospital-and-physician-charges
+    notes: >-
+      Tall CSV with real per-payer dollar rates. Payer names carry bracketed internal codes
+      ("CAREFIRST [201]"); many plans are professional ("PB ...") rather than facility fees.
+      Header has a trailing space in "code|1 ".
+
+  - id: george-washington-university-hospital
+    name: George Washington University Hospital
+    ccn: "090001"
+    address:
+      street: 900 23rd St NW
+      city: Washington
+      state: DC
+      zip: "20037"
+    lat: 38.900756
+    lon: -77.050202
+    type: Acute Care Hospitals
+    in_service_area: true
+    format: csv_wide
+    parser: cms_csv_wide_v3
+    mrf_url: https://uhsfilecdn.eskycity.net/ac/232896725_george-washington-university-hospital_standardcharges.csv
+    discovery:
+      method: cms_hpt_txt
+      index_url: https://www.gwhospital.com/cms-hpt.txt
+      source_page_url: https://www.gwhospital.com/patients-visitors/pricing-guide
+    notes: >-
+      DC is not rate-regulated, so negotiated rates differ by payer (unlike Maryland).
+      Wide CSV whose payer names contain pipes ("AMERIHEALTH | ALLIANCE|MEDICAID"); see
+      parse/csv_wide.py. Some negotiated drug rates are $0.01.

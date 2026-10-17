@@ -5,6 +5,7 @@ _percentage, _algorithm, |methodology), plus  additional_payer_notes|<payer>|<pl
 The payer and plan names live only in the column header, so they are read from there.
 """
 
+from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass
 
@@ -34,16 +35,31 @@ class PayerColumns:
     notes: int | None = None
 
 
-def payer_column_groups(columns: dict[str, int]) -> list[PayerColumns]:
+def split_payer_plan(middle: list[str], quirks: Counter[str]) -> tuple[str, str]:
+    """The segments between a column's prefix and suffix -> (payer, plan).
+
+    CMS expects exactly two. GWU writes payer names containing pipes
+    ("AMERIHEALTH | ALLIANCE|MEDICAID"), which makes the split ambiguous: we take the first
+    segment as the payer and keep the rest, pipes included, as the plan, and count it. The
+    exact column name is kept as the line's source_locator, so nothing is lost.
+    """
+    if len(middle) > 2:
+        quirks["payer_plan_header_ambiguous"] += 1
+    return middle[0], "|".join(middle[1:])
+
+
+def payer_column_groups(columns: dict[str, int], quirks: Counter[str]) -> list[PayerColumns]:
     """Find every payer/plan block in a wide header, in column order."""
     groups: dict[tuple[str, str], PayerColumns] = {}
     for name, index in columns.items():
         parts = name.split("|")
-        if parts[0] == "standard_charge" and len(parts) == 4 and parts[3] in _PAYER_FIELDS:
-            group = groups.setdefault((parts[1], parts[2]), PayerColumns(parts[1], parts[2]))
-            setattr(group, _PAYER_FIELDS[parts[3]], index)
-        elif parts[0] == "additional_payer_notes" and len(parts) == 3:
-            group = groups.setdefault((parts[1], parts[2]), PayerColumns(parts[1], parts[2]))
+        if parts[0] == "standard_charge" and len(parts) >= 4 and parts[-1] in _PAYER_FIELDS:
+            payer, plan = split_payer_plan(parts[1:-1], quirks)
+            group = groups.setdefault((payer, plan), PayerColumns(payer, plan))
+            setattr(group, _PAYER_FIELDS[parts[-1]], index)
+        elif parts[0] == "additional_payer_notes" and len(parts) >= 3:
+            payer, plan = split_payer_plan(parts[1:], quirks)
+            group = groups.setdefault((payer, plan), PayerColumns(payer, plan))
             group.notes = index
     return list(groups.values())
 
@@ -65,7 +81,7 @@ class CsvWideParser:
 
         for row in self.template.rows():
             if groups is None:
-                groups = payer_column_groups(row.columns)
+                groups = payer_column_groups(row.columns, self.quirks)
                 column_names = {i: name for name, i in row.columns.items()}
             if not row.aligned:
                 yield misaligned(row)

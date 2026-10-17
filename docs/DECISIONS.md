@@ -225,3 +225,45 @@ not rate-regulated, so their files should show real negotiated spreads.
 
 **Revisit when.** Designing the results and provenance screens (Phase 6), and when choosing
 the next hospitals to add.
+
+---
+
+## 2026-10-16 — Added GBMC (MD, tall) and GWU Hospital (DC, wide); Johns Hopkins not fetchable
+
+**What we found.** Mercy, our only Maryland tall-format hospital, publishes no payer rates,
+so payer handling was untested on Maryland tall data. Johns Hopkins Howard County was the
+first choice, but hopkinsmedicine.org now answers 403 to every honestly identified client
+(its robots.txt allows the path). Surveying other Maryland files: Frederick, Anne Arundel,
+CalvertHealth and UMMC publish one "All Payers" figure or none; GBMC publishes real per-payer
+dollar rates. For DC, MedStar Georgetown uses the same layout as MedStar Union Memorial;
+George Washington University Hospital (UHS) is a different system with different quirks.
+
+**Decision.** Add GBMC and GWU Hospital. Do not fetch Johns Hopkins: we will not disguise
+our User-Agent to get past a block (brief §7.6).
+
+**Revisit when.** Hopkins lifts the block, or publishes a contact for data access.
+
+---
+
+## 2026-10-16 — Only MS-DRG counts as DRG; placeholders and "all payers" handled explicitly
+
+**What we found.**
+- GWU publishes APR-DRG codes (`589-4`: DRG 589 at severity 4). APR-DRG and MS-DRG reuse
+  the same numbers for different conditions.
+- More placeholder codes: GBMC CPT `N/A` (on items whose only code column is empty — about
+  half of GBMC's price lines), GWU HCPCS `-` and `XXXXX`.
+- GBMC publishes facility rates under payer `ALL PAYERS`: in Maryland that is literally the
+  rate every insurer pays.
+- GWU writes payer names with underscores (`UNITED_HEALTH_CARE`) and with pipes inside them.
+- Bug found: wide-CSV payer notes were never attached (the plan name at the end of
+  `additional_payer_notes|<payer>|<plan>` was lowercased). Fixed with a regression test.
+
+**Decision.**
+- `code_type = DRG` means MS-DRG only. Other DRG families become LOCAL, flagged
+  `unsearched_code_type:<family>`, so a DRG search can never return the wrong procedure.
+- Placeholder codes (`0`, `N/A`, `-`, `XXXXX`, ...) are ignored and flagged. Items left with no
+  code are kept as lines; Phase 3's `code_present` rule decides their fate.
+- New canonical payer `all-payers` for rates published once for every insurer.
+- Payer text: underscores become spaces before matching.
+
+**Revisit when.** Users need APR-DRG search (then it gets its own code type, not a merge).
