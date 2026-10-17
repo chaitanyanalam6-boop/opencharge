@@ -323,16 +323,64 @@ def test_source_file_endpoint(client: TestClient) -> None:
 # --- /api/status ------------------------------------------------------------------------
 
 
-def test_status_reports_kpis_and_every_hospital(client: TestClient) -> None:
+def test_status_leads_with_freshness_and_per_hospital_coverage(client: TestClient) -> None:
     body = client.get("/api/status").json()
-    assert body["kpis"]["hospitals_tracked"] == 3  # in-area only
-    assert body["kpis"]["shoppable_services_total"] == 70
-    assert body["kpis"]["shoppable_services_covered"] == 2  # 73721 and 70450 are on CMS's list
-    statuses = {h["id"]: (h["status"], h["in_service_area"]) for h in body["hospitals"]}
-    assert statuses["charlotte-hospital"] == ("Loaded", False)  # shown, labelled out of area
-    assert statuses["downtown-hospital"] == ("Loaded", True)
-    assert body["recent_runs"][0]["status"] == "success"
+    freshness = body["freshness"]
+    assert freshness["hospitals"] == 3  # in-area only
+    assert freshness["published_from"] == freshness["published_to"] == "2026-01-01"
+    assert freshness["oldest_file_days"] >= 0
+    coverage = body["coverage"]
+    assert coverage["services_total"] == 70
+    # downtown prices 73721 and 70450; towson and cash-only price 73721 -> per hospital 2, 1, 1
+    assert (
+        coverage["min_per_hospital"],
+        coverage["median_per_hospital"],
+        coverage["max_per_hospital"],
+    ) == (1, 1.0, 2)
+    assert coverage["covered_by_any"] == 2
+
+
+def test_out_of_area_hospital_is_listed_separately(client: TestClient) -> None:
+    body = client.get("/api/status").json()
+    assert "charlotte-hospital" not in {h["id"] for h in body["hospitals"]}
+    assert [h["id"] for h in body["out_of_area"]] == ["charlotte-hospital"]
+
+
+def test_status_rows_carry_age_freshness_and_set_aside_rate(client: TestClient) -> None:
+    body = client.get("/api/status").json()
+    for h in body["hospitals"]:
+        assert h["freshness"] in {"fresh", "aging", "stale"}
+        assert h["age_days"] is not None
+        assert h["quarantine_pct"] == 0.0
+        assert (h["status"], h["tone"]) == ("Loaded", "green")
     assert body["needs_attention"] == []
+    assert body["recent_runs"][0]["status"] == "success"
+
+
+def test_needs_attention_lists_hospitals_with_many_rows_set_aside(tmp_path: Path) -> None:
+    # 3 of 4 rows have no billing code: 75% set aside -> red "Needs review", listed as attention.
+    engine = build_database(
+        tmp_path,
+        [
+            HospitalSpec(
+                "gappy-hospital",
+                *DOWNTOWN,
+                [
+                    f"{KNEE},73721,CPT,outpatient,1200,,,,,,",
+                    "SUPPLY A,N/A,CPT,outpatient,10,,,,,,",
+                    "SUPPLY B,N/A,CPT,outpatient,11,,,,,,",
+                    "SUPPLY C,N/A,CPT,outpatient,12,,,,,,",
+                ],
+            )
+        ],
+    )
+    for client in client_for(engine, None):
+        body = client.get("/api/status").json()
+    [row] = body["hospitals"]
+    assert (row["status"], row["tone"], row["quarantine_pct"]) == ("Needs review", "red", 75.0)
+    [item] = body["needs_attention"]
+    assert (item["kind"], item["tone"]) == ("quarantine", "red")
+    assert "items listed without a billing code" in item["summary"]
 
 
 # --- the OpenAPI docs -------------------------------------------------------------------

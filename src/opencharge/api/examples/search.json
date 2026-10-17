@@ -53,14 +53,14 @@
             "payer_name": "Aetna",
             "plan_name": "Aetna All HMO and PPO Plans",
             "setting": "outpatient",
-            "description": "BC-MRI LREX JT WO C LTD ANK LT",
+            "description": "BC-MRI LREX JT WO C LTD HIP RT",
             "issues": [],
             "provenance": {
               "source_file_id": "df3a43c5-68e2-4338-8cb8-979d7046afbd",
               "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
               "published_date": "2026-04-01",
               "fetched_at": "2026-10-17T02:36:14.645384Z",
-              "row_number": 3509,
+              "row_number": 3510,
               "locator": "standard_charge|Aetna US HealthCare Inc|Aetna All HMO and PPO Plans|negotiated_dollar",
               "parser": "cms_csv_wide_v3",
               "schema_version": "3.0.0",
@@ -129,7 +129,7 @@
             "payer_name": null,
             "plan_name": null,
             "setting": "outpatient",
-            "description": "BC-MRI LREX JT WO C LTD KNE RT",
+            "description": "BC-MRI LREX JT WO C LTD HIP RT",
             "issues": [
               "sub_cent_rounded"
             ],
@@ -138,7 +138,7 @@
               "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
               "published_date": "2026-04-01",
               "fetched_at": "2026-10-17T02:36:14.645384Z",
-              "row_number": 3511,
+              "row_number": 3510,
               "locator": "standard_charge|discounted_cash",
               "parser": "cms_csv_wide_v3",
               "schema_version": "3.0.0",
@@ -155,7 +155,7 @@
             "payer_name": null,
             "plan_name": null,
             "setting": "outpatient",
-            "description": "BC-MRI LREX JT WO C LTD ANK RT",
+            "description": "BC-MRI LREX JT WO C LTD KNE RT",
             "issues": [
               "sub_cent_rounded"
             ],
@@ -164,7 +164,7 @@
               "source_file_url": "https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv",
               "published_date": "2026-04-01",
               "fetched_at": "2026-10-17T02:36:14.645384Z",
-              "row_number": 3512,
+              "row_number": 3511,
               "locator": "standard_charge|discounted_cash",
               "parser": "cms_csv_wide_v3",
               "schema_version": "3.0.0",

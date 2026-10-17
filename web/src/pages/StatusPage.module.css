@@ -1,6 +1,16 @@
 .page {
-  padding-top: 32px;
+  padding-top: 24px;
   padding-bottom: 64px;
+}
+
+.backTop {
+  margin-bottom: 24px;
+}
+
+.backBottom {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
 }
 
 .header {
@@ -16,39 +26,67 @@
   max-width: 64ch;
 }
 
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin: 0 0 40px;
-}
-
-.kpi {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  padding: 16px 18px;
-}
-
-.kpi dt {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.kpi dd {
-  margin: 6px 0 0;
+/* Freshness hero: the one thing a patient needs first. */
+.hero {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  padding: 24px 28px;
 }
 
-.kpi dd .mono {
-  font-size: 28px;
+.heroLine {
+  font-size: 22px;
+  font-weight: 600;
   color: var(--ink);
-  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-.kpiNote {
-  font-size: 13px;
+.heroNote {
+  margin-top: 8px;
+  font-size: 15px;
+  max-width: 52ch;
+}
+
+.oldest {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.oldestNumber {
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.oldestLabel {
+  margin-top: 6px;
+  font-size: 14px;
   color: var(--muted);
+  max-width: 22ch;
+  margin-left: auto;
+}
+
+.oldestWho {
+  display: block;
+  color: var(--body);
+}
+
+.stale {
+  color: var(--amber) !important;
+}
+
+.coverage {
+  margin: 16px 0 40px;
+  font-size: 15px;
+  max-width: 80ch;
+}
+
+.coverage strong {
+  color: var(--ink);
 }
 
 .section {
@@ -57,20 +95,13 @@
 
 .section h2 {
   font-size: 20px;
-  margin-bottom: 6px;
-}
-
-.sectionHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
   margin-bottom: 12px;
 }
 
 .muted {
   color: var(--muted);
   font-size: 14px;
+  max-width: 80ch;
 }
 
 .hospital {
@@ -79,16 +110,26 @@
   display: block;
 }
 
-.outOfArea,
-.fetchError {
+.reason {
   display: block;
   font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
 }
 
-.fetchError {
-  color: var(--danger);
+.published {
+  white-space: nowrap;
+}
+
+.freshness {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.format {
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .pct {
@@ -96,10 +137,16 @@
   font-size: 12px;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.outOfArea {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--sunk);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.attentionCard {
   margin-bottom: 40px;
 }
 
@@ -108,42 +155,14 @@
   margin-bottom: 12px;
 }
 
-.bars {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.barLabel {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.barTrack {
-  height: 8px;
-  background: var(--line-soft);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
-
-.barFill {
-  height: 100%;
-  background: var(--teal-deep);
-}
-
 .attention {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 14px;
+  gap: 14px;
+  font-size: 15px;
 }
 
 .attention p {
@@ -153,9 +172,49 @@
 .allClear {
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: flex-start;
   color: var(--teal-deep);
   font-size: 15px;
+}
+
+.reasons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.reasonCard {
+  background: var(--sunk);
+  border-radius: var(--radius-card);
+  padding: 16px 18px;
+}
+
+.reasonCard h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.reasonCard p {
+  font-size: 14px;
+}
+
+/* Everything below this line is for technical readers. */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 56px 0 28px;
+  color: var(--faint);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line);
 }
 
 .rules {
@@ -195,44 +254,88 @@
   margin-top: 2px;
 }
 
-.reasons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.reason {
-  background: var(--sunk);
+.facts {
+  margin: 0;
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  padding: 16px 18px;
 }
 
-.reason h3 {
-  font-size: 15px;
-  margin-bottom: 4px;
-}
-
-.reason p {
+.facts div {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line-soft);
   font-size: 14px;
 }
 
-@media (max-width: 860px) {
-  .kpis {
-    grid-template-columns: repeat(2, 1fr);
+.facts div:last-child {
+  border-bottom: 0;
+}
+
+.facts dt {
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.barTrack {
+  height: 8px;
+  background: var(--line-soft);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--teal-deep);
+}
+
+@media (max-width: 760px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .cards,
+  .oldest {
+    text-align: left;
+  }
+  .oldestLabel {
+    margin-left: 0;
+  }
   .reasons {
     grid-template-columns: 1fr;
   }
-  .sectionHead {
-    flex-direction: column;
+  .facts div {
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 }
 
 @media (max-width: 420px) {
-  .kpi dd .mono {
-    font-size: 22px;
+  .heroLine {
+    font-size: 19px;
+  }
+  .oldestNumber {
+    font-size: 44px;
   }
   .rules li {
     grid-template-columns: 1fr;

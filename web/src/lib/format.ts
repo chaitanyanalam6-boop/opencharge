@@ -47,3 +47,18 @@ export function codeTypeOf(text: string): "CPT" | "HCPCS" | "DRG" | null {
   if (/^\d{3}$/.test(value)) return "DRG";
   return null;
 }
+
+/** "Jan" or "Jan 2026" from an ISO date, without a timezone shift. */
+export function month(iso: string, withYear = false): string {
+  return new Date(`${iso.slice(0, 10)}T12:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    ...(withYear ? { year: "numeric" } : {}),
+  });
+}
+
+/** "between Jan and Sep 2026", or "between Dec 2025 and Sep 2026" across years. */
+export function monthRange(from: string, to: string): string {
+  const sameYear = from.slice(0, 4) === to.slice(0, 4);
+  if (from.slice(0, 7) === to.slice(0, 7)) return `in ${month(to, true)}`;
+  return `between ${month(from, !sameYear)} and ${month(to, true)}`;
+}

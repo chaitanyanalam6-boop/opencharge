@@ -61,13 +61,13 @@ export function SearchPage() {
         <dl className={styles.stats}>
           {status.state === "ready" ? (
             <>
-              <Stat label="Hospitals" value={String(status.data.kpis.hospitals_tracked)} />
-              <Stat label="Price lines" value={compactCount(status.data.kpis.price_lines_loaded)} />
+              <Stat label="Hospitals" value={String(status.data.freshness.hospitals)} />
+              <Stat label="Price lines" value={compactCount(status.data.quarantine.rows_loaded)} />
               <Stat
-                label="CMS shoppable services covered"
-                value={`${status.data.kpis.shoppable_services_covered} of ${status.data.kpis.shoppable_services_total}`}
+                label="CMS shoppable services, per hospital"
+                value={`${status.data.coverage.min_per_hospital}–${status.data.coverage.max_per_hospital} of ${status.data.coverage.services_total}`}
               />
-              <Stat label="Last refresh" value={date(status.data.kpis.last_refresh)} />
+              <Stat label="Last refresh" value={date(status.data.last_refresh)} />
             </>
           ) : status.state === "loading" ? (
             [0, 1, 2, 3].map((i) => (

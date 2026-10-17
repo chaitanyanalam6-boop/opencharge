@@ -146,37 +146,60 @@ export interface HospitalPriceDetail {
   notice: string;
 }
 
+export type Tone = "green" | "amber" | "red" | "grey";
+
 export interface HospitalStatus {
   id: string;
   name: string;
   format: string;
   in_service_area: boolean;
-  status: "Loaded" | "Drift" | "Fetch failed" | "Not fetched" | string;
+  published_date: string | null;
+  age_days: number | null;
+  freshness: "fresh" | "aging" | "stale" | "unknown";
+  rows_in: number | null;
+  rows_quarantined: number | null;
+  quarantine_pct: number | null;
+  status: "Loaded" | "Loaded with gaps" | "Needs review" | "Not fetched" | string;
+  tone: Tone;
+  status_reason: string | null;
   last_fetch: { outcome: string; attempted_at: string; http_status: number | null; error: string | null } | null;
   current_file: SourceFile | null;
   shoppable_services_covered: number;
 }
 
 export interface StatusResponse {
-  kpis: {
-    hospitals_tracked: number;
-    price_lines_loaded: number;
-    rows_quarantined: number;
-    quarantined_pct: number;
-    shoppable_services_total: number;
-    shoppable_services_covered: number;
-    last_refresh: string | null;
+  freshness: {
+    hospitals: number;
+    published_from: string | null;
+    published_to: string | null;
+    oldest_file_days: number | null;
+    oldest_hospital: string | null;
+    any_stale: boolean;
+  };
+  coverage: {
+    services_total: number;
+    median_per_hospital: number;
+    min_per_hospital: number;
+    max_per_hospital: number;
+    covered_by_any: number;
   };
   hospitals: HospitalStatus[];
-  quarantined_by_rule: Record<string, number>;
+  out_of_area: HospitalStatus[];
   needs_attention: {
     hospital_id: string;
-    source_file_id: string;
-    detected_at: string;
-    added_columns: string[];
-    removed_columns: string[];
+    hospital_name: string;
+    tone: "amber" | "red";
+    kind: "quarantine" | "drift" | "fetch";
     summary: string;
+    detected_at: string | null;
   }[];
+  quarantine: {
+    rows_in: number;
+    rows_loaded: number;
+    rows_quarantined: number;
+    quarantined_pct: number;
+    by_rule: Record<string, number>;
+  };
   recent_runs: {
     id: string;
     started_at: string;
@@ -186,6 +209,7 @@ export interface StatusResponse {
     rows_loaded: number;
     rows_quarantined: number;
   }[];
+  last_refresh: string | null;
   answer_quality: Record<string, number> | null;
   notice: string;
 }

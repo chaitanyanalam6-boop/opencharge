@@ -181,19 +181,63 @@ class HospitalStatus(BaseModel):
     name: str
     format: str
     in_service_area: bool
-    status: str = Field(description="Loaded | Drift | Fetch failed | Not fetched")
+    published_date: date | None = Field(description="The hospital's own last_updated_on.")
+    age_days: int | None = Field(description="Days since the hospital published its current file.")
+    freshness: str = Field(description="fresh (<90 days) | aging (90-180) | stale (>180) | unknown")
+    rows_in: int | None
+    rows_quarantined: int | None
+    quarantine_pct: float | None = Field(description="Rows set aside, as % of rows taken in.")
+    status: str = Field(
+        description="Loaded (<10% set aside) | Loaded with gaps (10-50%) | Needs review (>50%, "
+        "drift, or fetch failure) | Not fetched"
+    )
+    tone: str = Field(description="green | amber | red | grey, matching `status`.")
+    status_reason: str | None = Field(
+        description="Why the status isn't plain Loaded, in plain words."
+    )
     last_fetch: FetchOut | None
     current_file: SourceFileOut | None
     shoppable_services_covered: int
 
 
-class DriftOut(BaseModel):
+class Freshness(BaseModel):
+    """What a patient most needs to know: how old the prices are."""
+
+    hospitals: int
+    published_from: date | None
+    published_to: date | None
+    oldest_file_days: int | None
+    oldest_hospital: str | None
+    any_stale: bool = Field(description="True if any in-area file is more than 180 days old.")
+
+
+class Coverage(BaseModel):
+    """CMS's 70 shoppable services, counted per hospital first (the honest headline)."""
+
+    services_total: int
+    median_per_hospital: float
+    min_per_hospital: int
+    max_per_hospital: int
+    covered_by_any: int = Field(description="Priced by at least one hospital (a weaker claim).")
+
+
+class AttentionItem(BaseModel):
     hospital_id: str
-    source_file_id: str
-    detected_at: datetime
-    added_columns: list[str]
-    removed_columns: list[str]
-    summary: str
+    hospital_name: str
+    tone: str = Field(description="amber | red")
+    kind: str = Field(description="quarantine | drift | fetch")
+    summary: str = Field(description="Plain-language explanation.")
+    detected_at: datetime | None
+
+
+class QuarantineSummary(BaseModel):
+    """For technical readers: the rows the pipeline deliberately set aside."""
+
+    rows_in: int
+    rows_loaded: int
+    rows_quarantined: int
+    quarantined_pct: float
+    by_rule: dict[str, int]
 
 
 class RunOut(BaseModel):
@@ -206,24 +250,17 @@ class RunOut(BaseModel):
     rows_quarantined: int
 
 
-class Kpis(BaseModel):
-    hospitals_tracked: int
-    price_lines_loaded: int
-    rows_quarantined: int
-    quarantined_pct: float = Field(description="Quarantined as a % of all rows taken in.")
-    shoppable_services_total: int
-    shoppable_services_covered: int = Field(
-        description="Of CMS's 70, how many at least one hospital prices."
-    )
-    last_refresh: datetime | None
-
-
 class StatusResponse(BaseModel):
-    kpis: Kpis
-    hospitals: list[HospitalStatus]
-    quarantined_by_rule: dict[str, int]
-    needs_attention: list[DriftOut]
+    freshness: Freshness
+    coverage: Coverage
+    hospitals: list[HospitalStatus] = Field(description="In-area hospitals only.")
+    out_of_area: list[HospitalStatus] = Field(
+        description="Ingested to exercise a parser; never shown in search."
+    )
+    needs_attention: list[AttentionItem]
+    quarantine: QuarantineSummary
     recent_runs: list[RunOut]
+    last_refresh: datetime | None
     answer_quality: dict[str, float] | None = Field(description="Latest eval results (Phase 7).")
     notice: str = NOTICE
 

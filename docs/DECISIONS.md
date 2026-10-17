@@ -418,3 +418,35 @@ detail page needs every source row (then store raw rows at load time instead of 
 
 **Revisit when.** The API's types change often enough that hand-written TypeScript types drift;
 then generate them from /openapi.json.
+
+---
+
+## 2026-10-17 — Status page: patients first, engineers second
+
+**What we found (review feedback).** The status page led with engineering KPIs, showed GBMC
+as a green "Loaded" while 53.2% of its rows were set aside, said "nothing needs attention"
+because it only checked for schema drift, claimed "69/70 shoppable services" when individual
+hospitals cover 30–57, mixed the out-of-area Novant file into the main table, and showed an
+empty answer-quality card.
+
+**Decision.**
+- **Top half for patients**: a freshness line ("4 hospitals · prices published between Jan and
+  Sep 2026") and the days since the oldest file was published, amber when any file is stale.
+  Per-hospital freshness: fresh < 90 days, aging 90–180, stale > 180.
+- **One set of thresholds** (in `api/views.py`) drives both the pill and "Read with care":
+  under 10% of rows set aside → green "Loaded"; 10–50% → amber "Loaded with gaps"; over 50% →
+  red "Needs review". Unreviewed drift and failed downloads are also "Needs review", with the
+  reason shown. Boundary values are unit-tested.
+- **Coverage is stated per hospital first** (range and median), then "at least one hospital".
+- **Table order follows what a patient needs**: Hospital, Published (with age in days), CMS
+  coverage, Status, Rows set aside, Format.
+- **Novant moves to an "Out of area" note** under the table, and out of the attention list.
+- **Bottom half for technical readers**, under a divider: "Rows we set aside" (with one
+  sentence on why setting rows aside is deliberate), pipeline facts and thresholds.
+- **Answer quality is hidden until an eval has produced numbers.** Running it needs the 50
+  hand-labelled questions (Phase 7); placeholder questions would make the card meaningless.
+- Links back to search at the top and bottom.
+
+**Revisit when.** Phase 7's eval runs (the card then appears on its own), or a hospital's
+set-aside rate turns out to mislead in the other direction (many rows set aside for benign
+reasons, e.g. unmatched regional insurers).
