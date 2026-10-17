@@ -103,3 +103,37 @@ robots.txt. Screen 4 needs exactly that per-hospital status.
 query.
 
 **Revisit when.** Fetching moves to a job queue with its own attempt history.
+
+---
+
+## 2026-10-16 — Parsers stream with stdlib `csv` and `ijson`; Polars is for bulk work later
+
+**What we found.** The brief names Polars for data processing. Polars cannot stream nested
+JSON at all, so the JSON parser needs `ijson` regardless. For CSV, Polars' batched reader is
+much faster but reports positions per batch, so the exact source row number (our provenance
+promise) has to be rebuilt from batch offsets plus the two-row CMS metadata preamble.
+
+**Decision.** Each parser is a generator yielding one `RawPriceLine` at a time: stdlib `csv`
+for CSV tall/wide, `ijson` for JSON. Every record carries the row number it was read from,
+taken directly from the reader. Polars comes in where it is genuinely strong: bulk
+normalization, validation and loading of already-parsed records.
+
+**Why.** Provenance has to be correct by construction, not by careful arithmetic. Flat memory
+use for any file size. The cost is speed: a 113 MB wide CSV takes on the order of a minute,
+which is fine for a weekly batch job.
+
+**Revisit when.** Parse time dominates the weekly run (e.g. 50+ hospitals or multi-GB files
+like Holy Cross's 3.7 GB CSV), at which point a Polars CSV path with a row-number test
+against the stdlib parser's output becomes worth it.
+
+---
+
+## 2026-10-16 — Public GitHub repository
+
+**Decision.** Publish as a public repo under `chaitanyanalam6-boop/opencharge`.
+
+**Why.** It is a portfolio project; employers need to read it and see CI pass. Nothing
+committed is secret: `.env` and `data/` are gitignored, and every hospital file is public.
+
+**Revisit when.** Never for code. Any credential that lands in history must be rotated, not
+just deleted.
