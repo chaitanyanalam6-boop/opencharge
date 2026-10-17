@@ -1,0 +1,88 @@
+# OpenCharge source registry.
+#
+# One entry per hospital. Every fact here was copied from a primary source, not typed from memory:
+#   ccn, address        CMS Hospital General Information dataset (data.cms.gov, xubh-q36u)
+#   lat, lon            US Census Geocoder, exact match on the address above
+#   mrf_url, source_page_url
+#                       the hospital's own /cms-hpt.txt index (discovery.index_url)
+#
+# Fields:
+#   in_service_area  true = shown in search results. false = ingested and parsed, but never
+#                    returned to users. Defaults to true. See docs/DECISIONS.md (2026-10-16).
+#   format           csv_wide | csv_tall | json — the three CMS template shapes.
+#   parser           id of the parser in src/opencharge/parse/ that reads this file.
+#   discovery.method cms_hpt_txt = found via the hospital's index (re-discoverable automatically).
+#                    manual      = landing page recorded by hand; re-check when the link breaks.
+
+hospitals:
+  - id: medstar-union-memorial
+    name: MedStar Union Memorial Hospital
+    ccn: "210024"
+    address:
+      street: 201 East University Parkway
+      city: Baltimore
+      state: MD
+      zip: "21218"
+    lat: 39.330305
+    lon: -76.614386
+    type: Acute Care Hospitals
+    in_service_area: true
+    format: csv_wide
+    parser: cms_csv_wide_v3
+    mrf_url: https://www.medstarhealth.org/-/media/project/mho/medstar/billing-and-insurance/2026/520591685_medstar_union_memorial_hospital_standardcharges.csv
+    discovery:
+      method: cms_hpt_txt
+      index_url: https://www.medstarhealth.org/cms-hpt.txt
+      source_page_url: https://www.medstarhealth.org/price-transparency-disclosures
+    notes: >-
+      Wide CSV, 315 columns: one block of rate columns per payer/plan
+      (e.g. "Aetna US HealthCare Inc|Aetna All HMO and PPO Plans").
+
+  - id: mercy-medical-center
+    name: Mercy Medical Center
+    ccn: "210008"
+    address:
+      street: 301 Saint Paul Place
+      city: Baltimore
+      state: MD
+      zip: "21202"
+    lat: 39.292415
+    lon: -76.613471
+    type: Acute Care Hospitals
+    in_service_area: true
+    format: csv_tall
+    parser: cms_csv_tall_v3
+    mrf_url: https://mdmercy.com/-/media/files/about-mercy/policies-and-documents/520591658_mercymedicalcenter_standardcharges.ashx
+    discovery:
+      method: cms_hpt_txt
+      index_url: https://mdmercy.com/cms-hpt.txt
+      source_page_url: https://mdmercy.com/patients-and-visitors/billing-and-insurance/hospital-charge-and-facility-fee-information
+    notes: >-
+      Tall CSV served with an .ashx extension, so the format cannot be inferred from the URL.
+      Its cms-hpt.txt starts with a UTF-8 BOM and uses CRLF line endings.
+
+  - id: novant-charlotte-orthopedic
+    name: Novant Health Charlotte Orthopedic Hospital
+    # Operates under The Presbyterian Hospital's license, so it shares that hospital's CCN.
+    ccn: "340053"
+    address:
+      street: 1901 Randolph Rd
+      city: Charlotte
+      state: NC
+      zip: "28207"
+    lat: 35.210781
+    lon: -80.824509
+    type: Acute Care Hospitals
+    # Out of area on purpose: no MD/DC/NoVA hospital publishes JSON, so this file exists to
+    # exercise the JSON parser on a real ~280 MB file. It must never appear in search results.
+    in_service_area: false
+    format: json
+    parser: cms_json_v3
+    mrf_url: https://www2.novanthealth.org/Public_Files/regulatory/560554230_the-presbyterian-hospital-dba-novant-health-charlotte-orthopedic-hospital_standardcharges.json
+    discovery:
+      method: cms_hpt_txt
+      index_url: https://www.novanthealth.org/cms-hpt.txt
+      source_page_url: https://www.novanthealth.org/for-patients/billing--insurance/price-transparency/
+    notes: >-
+      JSON v3.0.0, ~284 MB. Many payer entries publish only standard_charge_percentage
+      (no dollar amount); those must load as a NULL rate, never as a price.
